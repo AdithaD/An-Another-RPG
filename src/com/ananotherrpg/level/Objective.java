@@ -5,6 +5,14 @@ public class Objective {
 	private String description;
 	
 	private Location location;
-	private Boolean isComplete;
-	private Boolean isActive;
+	
+	private Boolean isComplete = false;
+	private Boolean isActive = false;
+	
+	public Objective(int objectiveId, String description, Location location) {
+		super();
+		this.objectiveId = objectiveId;
+		this.description = description;
+		this.location = location;
+	}
 }

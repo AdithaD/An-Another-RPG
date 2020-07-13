@@ -7,39 +7,37 @@ import java.util.Map;
 
 public class Graph<T> {
 
-	private Map<Node<T>, List<Node<T>>> adjacentNodes;
+	private Map<T, List<T>> adjacentNodes;
 	
 	public Graph() {
-		adjacentNodes = new HashMap<Node<T>, List<Node<T>>>();
+		adjacentNodes = new HashMap<T, List<T>>();
 	}
 	
-	public Graph(Map<Node<T>, List<Node<T>>> adjacentNodes) {
+	public Graph(Map<T, List<T>> adjacentNodes) {
 		super();
 		this.adjacentNodes = adjacentNodes;
 	}
 
-
-
-	public void addNode(Node<T> newNode) {
-		adjacentNodes.putIfAbsent(newNode, new ArrayList<Node<T>>());
+	public void addNode(T newNode) {
+		adjacentNodes.putIfAbsent(newNode, new ArrayList<T>());
 	}
 	
-	public void removeNode(Node<T> targetNode) {
+	public void removeNode(T targetNode) {
 		adjacentNodes.values().stream().forEach(e -> e.remove(targetNode));
 		adjacentNodes.remove(targetNode);
 	}
 	
-	public void addEdge(Node<T> node1, Node<T> node2) {
+	public void addEdge(T node1, T node2) {
 		adjacentNodes.get(node1).add(node2);
 		adjacentNodes.get(node2).add(node1);
 	}
 	
-	public void removeEdge(Node<T> node1, Node<T> node2) {
+	public void removeEdge(T node1, T node2) {
 		adjacentNodes.get(node1).remove(node2);
 		adjacentNodes.get(node2).remove(node1);
 	}
 
-	public List<Node<T>> getAdjacentNodes(Node<T> node){
+	public List<T> getAdjacentNodes(T node){
 		return adjacentNodes.get(node);
 	}
 }

@@ -2,7 +2,9 @@ package com.ananotherrpg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Combatant;
@@ -17,7 +19,6 @@ import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.Quest;
 import com.ananotherrpg.util.Graph;
-import com.ananotherrpg.util.Node;
 
 public class Game {
 
@@ -42,7 +43,7 @@ public class Game {
 		ArrayList<Entity> lobbyEntities = new ArrayList<Entity>();
 		lobbyEntities.add(manager);
 
-		Location lobby = new Location("lobby", lobbyEntities, lobbyItems);
+		Location lobby = new Location("lobby", "An illustrious hotel lobby filled with an air of richness.", lobbyEntities, lobbyItems);
 
 		Item key = new Item("Key");
 		ArrayList<ItemStack> room1Items = new ArrayList<ItemStack>();
@@ -53,17 +54,16 @@ public class Game {
 		ArrayList<Entity> room1Entities = new ArrayList<Entity>();
 		room1Entities.add(angryman);
 
-		Location room1 = new Location("A Non-descript room", room1Entities, room1Items);
+		Location room1 = new Location("A Non-descript room", 
+				"A dainty, run-down room who's atmosphere is almost unbecoming of the hotel it's connected to",
+				room1Entities, room1Items);
 
 		Graph<Location> locations = new Graph<Location>();
 
-		Node<Location> lobbyNode = new Node<Location>(lobby.getName(), lobby);
-		Node<Location> room1Node = new Node<Location>(room1.getName(), room1);
+		locations.addNode(lobby);
+		locations.addNode(room1);
 
-		locations.addNode(lobbyNode);
-		locations.addNode(room1Node);
-
-		locations.addEdge(lobbyNode, room1Node);
+		locations.addEdge(lobby, room1);
 
 		ArrayList<Combatant> killTargets = new ArrayList<Combatant>();
 		killTargets.add(angryman);
@@ -74,7 +74,7 @@ public class Game {
 		Quest killAngryBby = new Quest(22, objectives, new Quest[0], false, false);
 
 		Campaign testCampaign = new Campaign(campaignID,
-				"A beautiful hotel lobby with an inconspicuous room to the side", locations, lobbyNode,
+				"A beautiful hotel lobby with an inconspicuous room to the side appears before you", locations, lobby,
 				killAngryBby);
 
 		campaign = testCampaign;
@@ -86,6 +86,7 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
+		@SuppressWarnings("resource")
 		Scanner s = new Scanner(System.in);
 
 		System.out.println("Welcome to an another rpg!");
@@ -128,35 +129,37 @@ public class Game {
 
 		System.out.println(campaign.getIntroduction());
 		while (shouldKeepPlaying) {
-			System.out.println("what would you like to do?");
-			// Player options are: Look around (currentLocation), Enter (Location), Talk
-			// (Entity), Help
+			if(gameState == State.GAME) {
+				System.out.println("What would you like to do?");
+				// Player options are: Look around (currentLocation), Enter (Location), Talk
+				// (Entity), Help
 
-			ArrayList<String> options = new ArrayList<String>();
-			options.add("Look around");
-			options.add("Enter");
-			options.add("Talk");
-			options.add("Help");
+				ArrayList<String> options = new ArrayList<String>();
+				options.add("Look around");
+				options.add("Move to");
+				options.add("Talk");
+				options.add("Help");
 
-			String input = s.next();
-			while (!options.contains(input)) {
-				System.out.println("That's not a valid option");
-				input = s.nextLine();
-			}
+				String input = s.nextLine();
+				
+				while (!options.contains(input)) {
+					System.out.println("That's not a valid option");
+					input = s.nextLine();
+				}
 
-			switch (input) {
-			case "Look around":
-				lookAround();
-				break;
-			case "Enter":
-				enter(s);
-				break;
-			case "Talk":
-				talk(s);
-				break;
+				switch (input) {
+				case "Look around":
+					lookAround();
+					break;
+				case "Move to":
+					moveTo(s);
+					break;
+				case "Talk":
+					talk(s);
+					break;
+				}
 			}
 		}
-	
 	}
 	
 	private void talk(Scanner s) {
@@ -164,49 +167,46 @@ public class Game {
 		
 	}
 
-	private void enter(Scanner s) {
+	private void moveTo(Scanner s) {
 		System.out.println("Where would you like to go ?");
 		
-		List<Node<Location>> adjacentLocations = campaign
+		List<Location> adjacentLocations = campaign
 				.getLocations()
 				.getAdjacentNodes(campaign.getCurrentLocation());
 		
 		// Queries the location data from the location nodes and returns it as a Identifiable array
-		List<Location> locationsData = adjacentLocations
-				.stream()
-				.map(Node<Location>::getData)
-				.collect(Collectors.toList());
 				
-		listNames(locationsData);
+		listIdentifiers(adjacentLocations);
 		
 		String input = s.nextLine();
-		List<String> options = locationsData.stream().map(Location::getName).collect(Collectors.toList());
+		Map<String, Location> options = adjacentLocations.stream().collect(Collectors.toMap(Location::getName, Function.identity()));
 		
-		while(!(options.contains(input))) {
+		while(!(options.containsKey(input))) {
 			System.out.println("That's not a valid option");
 			input = s.nextLine();
 		}
 		
+		campaign.setCurrentLocation(options.get(input));
+		System.out.println("You move to " + campaign.getCurrentLocation().getName());
 		
 	}
 
 	private void lookAround() {
+		System.out.println(campaign.getCurrentLocation().getDescription());
 		System.out.println("You do a quick whirl and you see:");
 				
-		listNames(campaign
+		listIdentifiers(campaign
 				.getCurrentLocation()
-				.getData()
 				.getPermanentEntities());
 		
-		listNames(campaign.getCurrentLocation()
-				.getData()
+		listIdentifiers(campaign.getCurrentLocation()
 				.getItems()
 				.stream()
 				.map(ItemStack::getItem)
 				.collect(Collectors.toList()));
 	}
 	
-	private void listNames(List<? extends Identifiable> list) {
+	private void listIdentifiers(List<? extends Identifiable> list) {
 		for(Identifiable object : list) {
 			System.out.println("* " + object.getName());
 		}

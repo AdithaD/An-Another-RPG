@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import com.ananotherrpg.entity.Player;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.util.Graph;
-import com.ananotherrpg.util.Node;
 
 public class Campaign {
 	private int campaignId;
@@ -14,7 +13,7 @@ public class Campaign {
 	private String introduction;
 	
 	private Graph<Location> locations;
-	private Node<Location> currentLocation;
+	private Location currentLocation;
 	
 	private LinkedList<Quest> questsLog;
 	private Quest currentQuest;
@@ -23,7 +22,7 @@ public class Campaign {
 	
 	private Boolean isComplete;
 	
-	public Campaign(int campaignId, String introduction, Graph<Location> locations, Node<Location> currentLocation, Quest beginningQuest) {
+	public Campaign(int campaignId, String introduction, Graph<Location> locations, Location currentLocation, Quest beginningQuest) {
 		this.introduction = introduction;
 		this.campaignId = campaignId;
 		this.locations = locations;
@@ -32,7 +31,7 @@ public class Campaign {
 		this.player = new Player("Mark", 20, 20, new Inventory(), 5, 1);
 	}
 
-	public Campaign(int campaignId, String introduction, Graph<Location> locations, Node<Location> currentLocation, LinkedList<Quest> quests,
+	public Campaign(int campaignId, String introduction, Graph<Location> locations, Location currentLocation, LinkedList<Quest> quests,
 			Quest currentQuest, Player player) {
 		super();
 		this.introduction = introduction;
@@ -57,7 +56,7 @@ public class Campaign {
 		this.locations = locations;
 	}
 
-	public Node<Location> getCurrentLocation() {
+	public Location getCurrentLocation() {
 		return currentLocation;
 	}
 
@@ -99,5 +98,10 @@ public class Campaign {
 
 	public String getIntroduction() {
 		return introduction;
+	}
+
+	public void setCurrentLocation(Location location) {
+		this.currentLocation = location;
+		
 	}
 }

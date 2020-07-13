@@ -11,6 +11,8 @@ import com.ananotherrpg.util.Graph;
 
 public class Campaign {
 	private int campaignId;
+
+	private String introduction;
 	
 	private Graph<Location> locations;
 	private Location currentLocation;
@@ -22,7 +24,8 @@ public class Campaign {
 	
 	private Boolean isComplete;
 	
-	public Campaign(int campaignId, Graph<Location> locations, Location currentLocation, Quest beginningQuest) {
+	public Campaign(int campaignId, String introduction, Graph<Location> locations, Location currentLocation, Quest beginningQuest) {
+		this.introduction = introduction;
 		this.campaignId = campaignId;
 		this.locations = locations;
 		this.currentLocation = currentLocation;
@@ -30,9 +33,10 @@ public class Campaign {
 		this.player = new Player("Mark", 20, 20, new Inventory(), 5, 1);
 	}
 
-	public Campaign(int campaignId, Graph<Location> locations, Location currentLocation, LinkedList<Quest> quests,
+	public Campaign(int campaignId, String introduction, Graph<Location> locations, Location currentLocation, LinkedList<Quest> quests,
 			Quest currentQuest, Player player) {
 		super();
+		this.introduction = introduction;
 		this.campaignId = campaignId;
 		this.locations = locations;
 		this.currentLocation = currentLocation;
@@ -45,4 +49,60 @@ public class Campaign {
 		return null;
 	}
 	
+	
+	public Graph<Location> getLocations() {
+		return locations;
+	}
+
+	public void setLocations(Graph<Location> locations) {
+		this.locations = locations;
+	}
+
+	public Location getCurrentLocation() {
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(Location currentLocation) {
+		this.currentLocation = currentLocation;
+	}
+
+	public LinkedList<Quest> getQuestsLog() {
+		return questsLog;
+	}
+
+	public void setQuestsLog(LinkedList<Quest> questsLog) {
+		this.questsLog = questsLog;
+	}
+
+	public Quest getCurrentQuest() {
+		return currentQuest;
+	}
+
+	public void setCurrentQuest(Quest currentQuest) {
+		this.currentQuest = currentQuest;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
+	public Boolean getIsComplete() {
+		return isComplete;
+	}
+
+	public void setIsComplete(Boolean isComplete) {
+		this.isComplete = isComplete;
+	}
+
+	public int getCampaignId() {
+		return campaignId;
+	}
+
+	public String getIntroduction() {
+		return introduction;
+	}
 }

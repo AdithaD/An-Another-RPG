@@ -1,13 +1,12 @@
 package com.ananotherrpg.level;
 
-public class Objective {
-	private int objectiveId;
-	private String description;
+public abstract class Objective {
+	protected int objectiveId;
+	protected String description;
 	
-	private Location location;
+	protected Location location;
 	
-	private Boolean isComplete = false;
-	private Boolean isActive = false;
+	protected Boolean isActive = false;
 	
 	public Objective(int objectiveId, String description, Location location) {
 		super();
@@ -15,4 +14,6 @@ public class Objective {
 		this.description = description;
 		this.location = location;
 	}
+	
+	public abstract boolean isComplete();
 }

@@ -6,6 +6,7 @@ public class Node<T> {
 	
 	public Node(String label, T data){
 		this.label = label;
+		this.data = data;
 	}
 
 	public T getData() {

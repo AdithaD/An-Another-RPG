@@ -1,22 +1,25 @@
 package com.ananotherrpg.level;
 
+import java.util.ArrayList;
+
+import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.inventory.ItemStack;
 
-public class Location {
+public class Location implements Identifiable{
 		private int locationId;
 		
 		private String name;
 		
-		private Entity[] permanentEntities;
-		private ItemStack[] items;
+		private ArrayList<Entity> permanentEntities;
+		private ArrayList<ItemStack> items;
 		
 		public Location(int locationId) {
 			super();
 			this.locationId = locationId;
 		}
 
-		public Location(String name, Entity[] permanentEntities, ItemStack[] items) {
+		public Location(String name, ArrayList<Entity> permanentEntities, ArrayList<ItemStack> items) {
 			super();
 			this.name = name;
 			this.permanentEntities = permanentEntities;
@@ -25,6 +28,10 @@ public class Location {
 
 		public String getName() {
 			return name;
+		}
+
+		public ArrayList<Entity> getPermanentEntities() {
+			return permanentEntities;
 		}	
 		
 }

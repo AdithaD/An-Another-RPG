@@ -1,7 +1,9 @@
 package com.ananotherrpg;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Combatant;
 import com.ananotherrpg.entity.Entity;
@@ -72,7 +74,7 @@ public class Game {
 		Quest killAngryBby = new Quest(22, objectives, new Quest[0], false, false);
 
 		Campaign testCampaign = new Campaign(campaignID,
-				"A beautiful hotel lobby with an inconspicuous room to the side", locations, lobbyNode.getData(),
+				"A beautiful hotel lobby with an inconspicuous room to the side", locations, lobbyNode,
 				killAngryBby);
 
 		campaign = testCampaign;
@@ -163,21 +165,54 @@ public class Game {
 	}
 
 	private void enter(Scanner s) {
-		// TODO Auto-generated method stub
+		System.out.println("Where would you like to go ?");
 		
-	}
-
-	private void listNames(Identifiable[] objects) {
-		for(Identifiable object : objects) {
-			System.out.println("* " + object.getName());
+		List<Node<Location>> adjacentLocations = campaign
+				.getLocations()
+				.getAdjacentNodes(campaign.getCurrentLocation());
+		
+		// Queries the location data from the location nodes and returns it as a Identifiable array
+		List<Location> locationsData = adjacentLocations
+				.stream()
+				.map(Node<Location>::getData)
+				.collect(Collectors.toList());
+				
+		listNames(locationsData);
+		
+		String input = s.nextLine();
+		List<String> options = locationsData.stream().map(Location::getName).collect(Collectors.toList());
+		
+		while(!(options.contains(input))) {
+			System.out.println("That's not a valid option");
+			input = s.nextLine();
 		}
+		
+		
 	}
 
 	private void lookAround() {
 		System.out.println("You do a quick whirl and you see:");
-		listNames(campaign.getCurrentLocation().getPermanentEntities().toArray(new Entity[0]));
+				
+		listNames(campaign
+				.getCurrentLocation()
+				.getData()
+				.getPermanentEntities());
 		
+		listNames(campaign.getCurrentLocation()
+				.getData()
+				.getItems()
+				.stream()
+				.map(ItemStack::getItem)
+				.collect(Collectors.toList()));
 	}
+	
+	private void listNames(List<? extends Identifiable> list) {
+		for(Identifiable object : list) {
+			System.out.println("* " + object.getName());
+		}
+	}
+
+	
 
 	private static Campaign chooseSave() {
 		return null;

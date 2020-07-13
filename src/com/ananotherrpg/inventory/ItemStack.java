@@ -15,4 +15,7 @@ public class ItemStack {
 		return item.getWeight() * quantity;
 	}
 	
+	public Item getItem() {
+		return item;
+	}
 }

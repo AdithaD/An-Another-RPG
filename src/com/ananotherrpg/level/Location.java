@@ -1,6 +1,7 @@
 package com.ananotherrpg.level;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.entity.Entity;
@@ -30,8 +31,12 @@ public class Location implements Identifiable{
 			return name;
 		}
 
-		public ArrayList<Entity> getPermanentEntities() {
+		public List<Entity> getPermanentEntities() {
 			return permanentEntities;
+		}
+
+		public ArrayList<ItemStack> getItems() {
+			return items;
 		}	
 		
 }

@@ -1,8 +1,6 @@
 package com.ananotherrpg.inventory;
 
-import com.ananotherrpg.Identifiable;
-
-public class Item implements Identifiable{
+public class Item{
 	protected int itemId;
 	
 	protected String name;
@@ -18,7 +16,6 @@ public class Item implements Identifiable{
 	public int getSellPrice() {
 		return sellPrice;
 	}
-	@Override
 	public String getName() {
 		return name;
 	}

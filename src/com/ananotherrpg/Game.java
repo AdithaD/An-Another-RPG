@@ -1,6 +1,7 @@
 package com.ananotherrpg;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -24,6 +25,14 @@ public class Game {
 
 	private Campaign campaign;
 
+	private static Scanner s;
+	
+	private ArrayList<String> options = new ArrayList<String>(Arrays.asList(new String[] {
+			"Look around", 
+			"Move to", 
+			"Examine", 
+			"Talk"}));
+
 	private enum State {
 		MENU, GAME, COMBAT
 	}
@@ -33,6 +42,8 @@ public class Game {
 	private Boolean shouldKeepPlaying = false;
 
 	public Game() {
+
+	
 		int campaignID = 1;
 
 		Weapon sword = new Weapon("Mjollnir", 3, 0.2, 2);
@@ -43,7 +54,7 @@ public class Game {
 		ArrayList<Entity> lobbyEntities = new ArrayList<Entity>();
 		lobbyEntities.add(manager);
 
-		Location lobby = new Location("lobby", "An illustrious hotel lobby filled with an air of richness.", lobbyEntities, lobbyItems);
+		Location lobby = new Location("lobby", "An illustrious hotel lobby filled with an air of richness.", lobbyEntities, lobbyItems, true);
 
 		Item key = new Item("Key");
 		ArrayList<ItemStack> room1Items = new ArrayList<ItemStack>();
@@ -86,8 +97,8 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
-		@SuppressWarnings("resource")
-		Scanner s = new Scanner(System.in);
+
+		s = new Scanner(System.in);
 
 		System.out.println("Welcome to an another rpg!");
 		System.out.println("Would you like to: \n 1 | Start a new campaign 2 | Load a previous campaign 3 | Quit ");
@@ -100,6 +111,10 @@ public class Game {
 			}
 			input = s.nextInt();
 		} while (!(input == 1 || input == 2 || input == 3));
+
+		// the \n doesn't get removed with s.nextInt(), and would cause the next s.nextLine() not to wait for user 
+		// input as it consumes the \n token and moves on. This removes that side effect.
+		s.nextLine();
 
 		Game game;
 
@@ -125,20 +140,10 @@ public class Game {
 		shouldKeepPlaying = true;
 		gameState = State.GAME;
 
-		Scanner s = new Scanner(System.in);
-
 		System.out.println(campaign.getIntroduction());
 		while (shouldKeepPlaying) {
 			if(gameState == State.GAME) {
 				System.out.println("What would you like to do?");
-				// Player options are: Look around (currentLocation), Enter (Location), Talk
-				// (Entity), Help
-
-				ArrayList<String> options = new ArrayList<String>();
-				options.add("Look around");
-				options.add("Move to");
-				options.add("Talk");
-				options.add("Help");
 
 				String input = s.nextLine();
 				
@@ -152,41 +157,36 @@ public class Game {
 					lookAround();
 					break;
 				case "Move to":
-					moveTo(s);
+					moveTo();
 					break;
 				case "Talk":
-					talk(s);
+					talk();
 					break;
 				}
 			}
 		}
 	}
 	
-	private void talk(Scanner s) {
-		// TODO Auto-generated method stub
+	private void talk() {
+		System.out.println("Who would you like to talk to?");
 		
+		listIdentifiers(campaign.getCurrentLocation().getPermanentEntities());
+
+		Entity target = queryUserInputAgainstIdentifiers(campaign.getCurrentLocation().getPermanentEntities(), s);
+		
+
 	}
 
-	private void moveTo(Scanner s) {
+	private void moveTo() {
 		System.out.println("Where would you like to go ?");
 		
 		List<Location> adjacentLocations = campaign
-				.getLocations()
+				.getLocationGraph()
 				.getAdjacentNodes(campaign.getCurrentLocation());
-		
-		// Queries the location data from the location nodes and returns it as a Identifiable array
 				
 		listIdentifiers(adjacentLocations);
 		
-		String input = s.nextLine();
-		Map<String, Location> options = adjacentLocations.stream().collect(Collectors.toMap(Location::getName, Function.identity()));
-		
-		while(!(options.containsKey(input))) {
-			System.out.println("That's not a valid option");
-			input = s.nextLine();
-		}
-		
-		campaign.setCurrentLocation(options.get(input));
+		campaign.setCurrentLocation(queryUserInputAgainstIdentifiers(adjacentLocations, s));
 		System.out.println("You move to " + campaign.getCurrentLocation().getName());
 		
 	}
@@ -200,15 +200,33 @@ public class Game {
 				.getPermanentEntities());
 		
 		listIdentifiers(campaign.getCurrentLocation()
-				.getItems()
-				.stream()
-				.map(ItemStack::getItem)
-				.collect(Collectors.toList()));
+				.getItemStacks());
+		
+		listIdentifiers(campaign
+				.getLocationGraph()
+				.getAdjacentNodes(campaign.getCurrentLocation()));
 	}
+	
+	private <T extends Identifiable> T queryUserInputAgainstIdentifiers(List<T> data, Scanner s){
+
+		String input = s.nextLine();
+
+		Map<String, T> options = data.stream().collect(Collectors.toMap(T::getName, Function.identity()));
+				
+		while (!options.keySet().contains(input)) {
+			System.out.println("That's not a valid option");
+			input = s.nextLine();
+		}
+
+		return options.get(input);			
+	}
+
 	
 	private void listIdentifiers(List<? extends Identifiable> list) {
 		for(Identifiable object : list) {
-			System.out.println("* " + object.getName());
+			if(object.isKnown()) {
+				System.out.println("* " + object.getName());
+			}
 		}
 	}
 

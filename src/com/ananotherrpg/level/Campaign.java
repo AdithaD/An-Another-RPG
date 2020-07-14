@@ -48,11 +48,11 @@ public class Campaign {
 	}
 	
 	
-	public Graph<Location> getLocations() {
+	public Graph<Location> getLocationGraph() {
 		return locations;
 	}
 
-	public void setLocations(Graph<Location> locations) {
+	public void setLocationGraph(Graph<Location> locations) {
 		this.locations = locations;
 	}
 

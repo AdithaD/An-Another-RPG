@@ -2,6 +2,7 @@ package com.ananotherrpg;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -9,7 +10,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Combatant;
+import com.ananotherrpg.entity.DialogueGraph;
+import com.ananotherrpg.entity.DialogueLine;
 import com.ananotherrpg.entity.Entity;
+import com.ananotherrpg.entity.Link;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.ItemStack;
@@ -26,12 +30,9 @@ public class Game {
 	private Campaign campaign;
 
 	private static Scanner s;
-	
-	private ArrayList<String> options = new ArrayList<String>(Arrays.asList(new String[] {
-			"Look around", 
-			"Move to", 
-			"Examine", 
-			"Talk"}));
+
+	private ArrayList<String> options = new ArrayList<String>(
+			Arrays.asList(new String[] { "Look around", "Move to", "Examine", "Talk" }));
 
 	private enum State {
 		MENU, GAME, COMBAT
@@ -43,29 +44,48 @@ public class Game {
 
 	public Game() {
 
-	
 		int campaignID = 1;
 
 		Weapon sword = new Weapon("Mjollnir", 3, 0.2, 2);
 		ArrayList<ItemStack> lobbyItems = new ArrayList<ItemStack>();
 		lobbyItems.add(new ItemStack(sword, 1));
 
-		Entity manager = new Entity("Manager", 20, 20, new Inventory(), false);
+		DialogueLine managerDialogueLine1 = new DialogueLine("Hello! Are you the adventurer I asked for?");
+		DialogueLine managerDialogueLine2 = new DialogueLine(
+				"Wow! There's a room over there with a scary old man! Clear him out for me. One way or the other...");
+		DialogueLine managerDialogueLine3 = new DialogueLine("Well, that's certainly a disappointment");
+
+		Link managerDialogueLink12 = new Link(managerDialogueLine2,
+				"I'm much more than that. I'm the best in the business!");
+		Link managerDialogueLink122 = new Link(managerDialogueLine2, "Yes.");
+		Link managerDialogueLink13 = new Link(managerDialogueLine3, "No, I think you've mistaken me for someone.");
+
+		DialogueGraph managerDialogueGraph = new DialogueGraph(managerDialogueLine1);
+		managerDialogueGraph.addDialogueLine(managerDialogueLine1);
+		managerDialogueGraph.addDialogueLine(managerDialogueLine2);
+		managerDialogueGraph.addDialogueLine(managerDialogueLine3);
+
+		managerDialogueGraph.addLink(managerDialogueLine1, managerDialogueLink12);
+		managerDialogueGraph.addLink(managerDialogueLine1, managerDialogueLink122);
+		managerDialogueGraph.addLink(managerDialogueLine1, managerDialogueLink13);
+
+		Entity manager = new Entity("Manager", 20, 20, new Inventory(), false, true, managerDialogueGraph);
 		ArrayList<Entity> lobbyEntities = new ArrayList<Entity>();
 		lobbyEntities.add(manager);
 
-		Location lobby = new Location("lobby", "An illustrious hotel lobby filled with an air of richness.", lobbyEntities, lobbyItems, true);
+		Location lobby = new Location("lobby", "An illustrious hotel lobby filled with an air of richness.",
+				lobbyEntities, lobbyItems, true);
 
 		Item key = new Item("Key");
 		ArrayList<ItemStack> room1Items = new ArrayList<ItemStack>();
 		room1Items.add(new ItemStack(sword, 1));
-		room1Items.add( new ItemStack(key, 1));
+		room1Items.add(new ItemStack(key, 1));
 
-		Combatant angryman = new Combatant("Angry Man", 20, 20, new Inventory(), 4, 1, false);
+		Combatant angryman = new Combatant("Angry Man", 20, 20, new Inventory(), 4, 1, Weapon.UNARMED, false);
 		ArrayList<Entity> room1Entities = new ArrayList<Entity>();
 		room1Entities.add(angryman);
 
-		Location room1 = new Location("A Non-descript room", 
+		Location room1 = new Location("A Non-descript room",
 				"A dainty, run-down room who's atmosphere is almost unbecoming of the hotel it's connected to",
 				room1Entities, room1Items);
 
@@ -103,18 +123,15 @@ public class Game {
 		System.out.println("Welcome to an another rpg!");
 		System.out.println("Would you like to: \n 1 | Start a new campaign 2 | Load a previous campaign 3 | Quit ");
 
-		int input;
-		do {
-			while (!s.hasNextInt()) {
-				System.out.println("That's not a valid option");
-				s.next();
-			}
-			input = s.nextInt();
-		} while (!(input == 1 || input == 2 || input == 3));
+		int input = -1;
 
-		// the \n doesn't get removed with s.nextInt(), and would cause the next s.nextLine() not to wait for user 
-		// input as it consumes the \n token and moves on. This removes that side effect.
-		s.nextLine();
+		while(!(input == 1 || input == 2|| input == 3)){
+			try {
+				input = Integer.parseInt(s.nextLine().trim());	
+			} catch (NumberFormatException e) {
+				System.out.println("That's not a valid option!");
+			}
+		}
 
 		Game game;
 
@@ -122,15 +139,15 @@ public class Game {
 			System.exit(0);
 		} else {
 			switch (input) {
-			case 1:
-				game = new Game();
-				game.start();
-				break;
+				case 1:
+					game = new Game();
+					game.start();
+					break;
 
-			case 2:
-				game = new Game(chooseSave());
-				game.start();
-				break;
+				case 2:
+					game = new Game(chooseSave());
+					game.start();
+					break;
 			}
 		}
 
@@ -142,95 +159,130 @@ public class Game {
 
 		System.out.println(campaign.getIntroduction());
 		while (shouldKeepPlaying) {
-			if(gameState == State.GAME) {
+			if (gameState == State.GAME) {
 				System.out.println("What would you like to do?");
 
 				String input = s.nextLine();
-				
+
 				while (!options.contains(input)) {
 					System.out.println("That's not a valid option");
 					input = s.nextLine();
 				}
 
 				switch (input) {
-				case "Look around":
-					lookAround();
-					break;
-				case "Move to":
-					moveTo();
-					break;
-				case "Talk":
-					talk();
-					break;
+					case "Look around":
+						lookAround();
+						break;
+					case "Move to":
+						moveTo();
+						break;
+					case "Talk":
+						talk();
+						break;
 				}
 			}
 		}
 	}
-	
+
 	private void talk() {
 		System.out.println("Who would you like to talk to?");
-		
+
 		listIdentifiers(campaign.getCurrentLocation().getPermanentEntities());
 
 		Entity target = queryUserInputAgainstIdentifiers(campaign.getCurrentLocation().getPermanentEntities(), s);
-		
 
+		initiateDialogue(target);
+	}
+
+	private void initiateDialogue(Entity target) {
+		DialogueGraph dialogueGraph = target.getDialogueGraph();
+		DialogueLine currentLine = dialogueGraph.getFirstDialogueLine();
+
+		System.out.println(currentLine.getDialogue());
+		while (dialogueGraph.hasNextDialogue(currentLine)) {
+			Map<String, Link> options = dialogueGraph.getLinks(currentLine).stream()
+					.collect(Collectors.toMap(Link::getResponse, Function.identity()));
+
+			List<String> optionsText = new ArrayList<String>(options.keySet());
+
+			listStrings(optionsText);
+
+			Link linkToTraverse = options.get(queryUserAgainstStrings(optionsText, s));
+
+			currentLine = linkToTraverse.getIncident();
+
+			System.out.println(currentLine.getDialogue());
+		}
 	}
 
 	private void moveTo() {
 		System.out.println("Where would you like to go ?");
-		
-		List<Location> adjacentLocations = campaign
-				.getLocationGraph()
-				.getAdjacentNodes(campaign.getCurrentLocation());
-				
+
+		List<Location> adjacentLocations = campaign.getLocationGraph().getAdjacentNodes(campaign.getCurrentLocation());
+
 		listIdentifiers(adjacentLocations);
-		
+
 		campaign.setCurrentLocation(queryUserInputAgainstIdentifiers(adjacentLocations, s));
 		System.out.println("You move to " + campaign.getCurrentLocation().getName());
-		
+
 	}
 
 	private void lookAround() {
 		System.out.println(campaign.getCurrentLocation().getDescription());
 		System.out.println("You do a quick whirl and you see:");
-				
-		listIdentifiers(campaign
-				.getCurrentLocation()
-				.getPermanentEntities());
-		
-		listIdentifiers(campaign.getCurrentLocation()
-				.getItemStacks());
-		
-		listIdentifiers(campaign
-				.getLocationGraph()
-				.getAdjacentNodes(campaign.getCurrentLocation()));
+
+		listIdentifiers(campaign.getCurrentLocation().getPermanentEntities());
+
+		listIdentifiers(campaign.getCurrentLocation().getItemStacks());
+
+		listIdentifiers(campaign.getLocationGraph().getAdjacentNodes(campaign.getCurrentLocation()));
 	}
-	
-	private <T extends Identifiable> T queryUserInputAgainstIdentifiers(List<T> data, Scanner s){
+
+	private <T extends Identifiable> T queryUserInputAgainstIdentifiers(List<T> data, Scanner s) {
 
 		String input = s.nextLine();
 
 		Map<String, T> options = data.stream().collect(Collectors.toMap(T::getName, Function.identity()));
-				
+
 		while (!options.keySet().contains(input)) {
 			System.out.println("That's not a valid option");
 			input = s.nextLine();
 		}
 
-		return options.get(input);			
+		return options.get(input);
 	}
 
-	
 	private void listIdentifiers(List<? extends Identifiable> list) {
-		for(Identifiable object : list) {
-			if(object.isKnown()) {
+		for (Identifiable object : list) {
+			if (object.isKnown()) {
 				System.out.println("* " + object.getName());
 			}
 		}
 	}
 
-	
+	private String queryUserAgainstStrings(List<String> data, Scanner s) {
+
+		System.out.print("Enter choice number: ");
+
+		String[] intToStringMap = data.toArray(new String[0]);
+
+		int input = -1;
+
+		while(!(input >= 1) && (input <= intToStringMap.length)){
+			try {
+				input = Integer.parseInt(s.nextLine().trim());	
+			} catch (NumberFormatException e) {
+				System.out.println("That's not a valid option!");
+			}
+		}
+		return intToStringMap[input - 1]; 
+	}
+
+	private void listStrings(List<String> data) {
+		for (int i = 0; i < data.size(); i++) {
+			System.out.println((i + 1) + ". " + data.get(i));
+		}
+	}
 
 	private static Campaign chooseSave() {
 		return null;

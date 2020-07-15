@@ -8,14 +8,15 @@ public class Player extends Combatant {
 	private int xp;
 	
 	
-	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, Weapon equippedWeapon) {
+	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, Weapon equippedWeapon, Boolean isDead) {
 		super(name, hp, maxHealth, inventory, initiative, level, equippedWeapon, false);
-		// TODO Auto-generated constructor stub
+		xp = 0;
 	}
 	
 	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level) {
-		super(name, hp, maxHealth, inventory, initiative, level, false);
-		// TODO Auto-generated constructor stub
+		super(name, hp, maxHealth, inventory, initiative, level, Weapon.UNARMED, false );
+		xp = 0;
+		equippedWeapon = new Weapon("Fists of fury",1, 0.5, 4);
 	}
 
 	
@@ -26,6 +27,7 @@ public class Player extends Combatant {
 	}
 	
 	private void levelUp() {
+		level += 1;
 		
 	}
 }

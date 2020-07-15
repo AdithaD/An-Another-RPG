@@ -19,4 +19,6 @@ public class Weapon extends Item {
 	public int calculateDamage() {
 		return damage;
 	}
+
+	public static final Weapon UNARMED = new Weapon("Fists", 2, 0.3, 5);
 }

@@ -15,16 +15,10 @@ public class Combatant extends Entity {
 	}
 
 	public Combatant(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, Weapon equippedWeapon, Boolean isDead) {
-		super(name, hp, maxHealth, inventory, isDead);
+		super(name, hp, maxHealth, inventory);
 		this.initiative = initiative;
 		this.level = level;
 		this.equippedWeapon = equippedWeapon;
-	}
-	
-	public Combatant(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, Boolean isDead) {
-		super(name, hp, maxHealth, inventory, isDead);
-		this.initiative = initiative;
-		this.level = level;
 	}
 	
 }

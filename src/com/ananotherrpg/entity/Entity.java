@@ -2,13 +2,16 @@ package com.ananotherrpg.entity;
 
 import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.inventory.Inventory;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Entity implements Identifiable {
 	private int entityId;
 
 	protected String name;
 
-	protected DialogueGraph dialogue;
+	protected LinkedDirectedGraph<DialogueLine, String> dialogue;
 
 	protected int hp;
 	protected int maxHealth;
@@ -28,11 +31,11 @@ public class Entity implements Identifiable {
 		this.inventory = inventory;
 		this.isDead = false;
 		this.isKnown = true;
-		this.dialogue = DialogueGraph.NO_DIALOGUE;
+		this.dialogue = Entity.NO_DIALOGUE;
 	}
 
 	public Entity(String name, int hp, int maxHealth, Inventory inventory, Boolean isDead, Boolean isKnown,
-	DialogueGraph dialogue) {
+	LinkedDirectedGraph<DialogueLine, String> dialogue) {
 		this.name = name;
 		this.hp = hp;
 		this.maxHealth = maxHealth;
@@ -62,8 +65,17 @@ public class Entity implements Identifiable {
 		return name;
 	}
 
-	public DialogueGraph getDialogueGraph(){
+	public LinkedDirectedGraph<DialogueLine, String> getDialogueGraph(){
 		return dialogue;
 	}
 
+	public static final LinkedDirectedGraph<DialogueLine,String> NO_DIALOGUE;
+    static{
+        DialogueLine noDialogueLine = new DialogueLine("They don't seem interested in talking");
+
+        HashMap<DialogueLine, List<Link<DialogueLine,String>>> noDialogueMap = new HashMap<DialogueLine, List<Link<DialogueLine,String>>>();
+        noDialogueMap.putIfAbsent(noDialogueLine, new ArrayList<Link<DialogueLine, String>>());
+
+        NO_DIALOGUE = new LinkedDirectedGraph<DialogueLine,String>(noDialogueMap, noDialogueLine);
+    }		
 }

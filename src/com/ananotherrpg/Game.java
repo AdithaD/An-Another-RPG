@@ -2,7 +2,6 @@ package com.ananotherrpg;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -10,10 +9,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Combatant;
-import com.ananotherrpg.entity.DialogueGraph;
 import com.ananotherrpg.entity.DialogueLine;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.Link;
+import com.ananotherrpg.entity.LinkedDirectedGraph;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.ItemStack;
@@ -55,15 +54,18 @@ public class Game {
 				"Wow! There's a room over there with a scary old man! Clear him out for me. One way or the other...");
 		DialogueLine managerDialogueLine3 = new DialogueLine("Well, that's certainly a disappointment");
 
-		Link managerDialogueLink12 = new Link(managerDialogueLine2,
+		Link<DialogueLine, String> managerDialogueLink12 = new Link<DialogueLine, String>(managerDialogueLine2,
 				"I'm much more than that. I'm the best in the business!");
-		Link managerDialogueLink122 = new Link(managerDialogueLine2, "Yes.");
-		Link managerDialogueLink13 = new Link(managerDialogueLine3, "No, I think you've mistaken me for someone.");
+		Link<DialogueLine, String> managerDialogueLink122 = new Link<DialogueLine, String>(managerDialogueLine2,
+				"Yes.");
+		Link<DialogueLine, String> managerDialogueLink13 = new Link<DialogueLine, String>(managerDialogueLine3,
+				"No, I think you've mistaken me for someone.");
 
-		DialogueGraph managerDialogueGraph = new DialogueGraph(managerDialogueLine1);
-		managerDialogueGraph.addDialogueLine(managerDialogueLine1);
-		managerDialogueGraph.addDialogueLine(managerDialogueLine2);
-		managerDialogueGraph.addDialogueLine(managerDialogueLine3);
+		LinkedDirectedGraph<DialogueLine, String> managerDialogueGraph = new LinkedDirectedGraph<DialogueLine, String>(
+				managerDialogueLine1);
+		managerDialogueGraph.addNode(managerDialogueLine1);
+		managerDialogueGraph.addNode(managerDialogueLine2);
+		managerDialogueGraph.addNode(managerDialogueLine3);
 
 		managerDialogueGraph.addLink(managerDialogueLine1, managerDialogueLink12);
 		managerDialogueGraph.addLink(managerDialogueLine1, managerDialogueLink122);
@@ -125,9 +127,9 @@ public class Game {
 
 		int input = -1;
 
-		while(!(input == 1 || input == 2|| input == 3)){
+		while (!(input == 1 || input == 2 || input == 3)) {
 			try {
-				input = Integer.parseInt(s.nextLine().trim());	
+				input = Integer.parseInt(s.nextLine().trim());
 			} catch (NumberFormatException e) {
 				System.out.println("That's not a valid option!");
 			}
@@ -195,19 +197,19 @@ public class Game {
 	}
 
 	private void initiateDialogue(Entity target) {
-		DialogueGraph dialogueGraph = target.getDialogueGraph();
-		DialogueLine currentLine = dialogueGraph.getFirstDialogueLine();
+		LinkedDirectedGraph<DialogueLine, String> dialogueGraph = target.getDialogueGraph();
+		DialogueLine currentLine = dialogueGraph.getFirstNode();
 
 		System.out.println(currentLine.getDialogue());
 		while (dialogueGraph.hasNextDialogue(currentLine)) {
-			Map<String, Link> options = dialogueGraph.getLinks(currentLine).stream()
+			Map<String, Link<DialogueLine, String>> options = dialogueGraph.getLinks(currentLine).stream()
 					.collect(Collectors.toMap(Link::getResponse, Function.identity()));
 
 			List<String> optionsText = new ArrayList<String>(options.keySet());
 
 			listStrings(optionsText);
 
-			Link linkToTraverse = options.get(queryUserAgainstStrings(optionsText, s));
+			Link<DialogueLine, String> linkToTraverse = options.get(queryUserAgainstStrings(optionsText, s));
 
 			currentLine = linkToTraverse.getIncident();
 
@@ -268,14 +270,14 @@ public class Game {
 
 		int input = -1;
 
-		while(!(input >= 1) && (input <= intToStringMap.length)){
+		while (!(input >= 1) && (input <= intToStringMap.length)) {
 			try {
-				input = Integer.parseInt(s.nextLine().trim());	
+				input = Integer.parseInt(s.nextLine().trim());
 			} catch (NumberFormatException e) {
 				System.out.println("That's not a valid option!");
 			}
 		}
-		return intToStringMap[input - 1]; 
+		return intToStringMap[input - 1];
 	}
 
 	private void listStrings(List<String> data) {

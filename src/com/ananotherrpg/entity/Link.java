@@ -1,21 +1,21 @@
 package com.ananotherrpg.entity;
 
-public class Link {
-    private DialogueLine incident;
+public class Link<T, S> {
+    private T incident;
 
-    private String response;
+    private S response;
 
-    public Link(DialogueLine incident, String response) {
+    public Link(T incident, S response) {
         this.incident = incident;
         this.response = response;
     }
 
 
-    public DialogueLine getIncident(){
+    public T getIncident(){
         return incident;
     }
 
-    public String getResponse(){
+    public S getResponse(){
         return response;
     }
 }

@@ -1,7 +1,11 @@
 package com.ananotherrpg.entity;
 
 import com.ananotherrpg.Identifiable;
+import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.inventory.Inventory;
+import com.ananotherrpg.util.Link;
+import com.ananotherrpg.util.LinkedDirectedGraph;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,10 +47,6 @@ public class Entity implements Identifiable {
 		this.isDead = isDead;
 		this.isKnown = isKnown;
 		this.dialogue = dialogue;
-	}
-
-	private void takeDamage(int damage) {
-		hp -= damage;
 	}
 
 	public Boolean IsDead() {

@@ -1,4 +1,4 @@
-package com.ananotherrpg.entity;
+package com.ananotherrpg.util;
 
 import java.util.*;
 
@@ -38,7 +38,7 @@ public class LinkedDirectedGraph<T, S>{
         }
     }
 
-    public void removeLink(T dialogueLine, Link link){
+    public void removeLink(T dialogueLine, Link<T,S> link){
         incidenceMap.get(dialogueLine).remove(link);
     }
 

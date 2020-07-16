@@ -1,4 +1,4 @@
-package com.ananotherrpg.entity;
+package com.ananotherrpg.util;
 
 public class Link<T, S> {
     private T incident;

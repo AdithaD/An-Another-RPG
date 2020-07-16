@@ -9,10 +9,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Combatant;
-import com.ananotherrpg.entity.DialogueLine;
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.entity.Link;
-import com.ananotherrpg.entity.LinkedDirectedGraph;
+import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.ItemStack;
@@ -23,6 +21,8 @@ import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.Quest;
 import com.ananotherrpg.util.Graph;
+import com.ananotherrpg.util.Link;
+import com.ananotherrpg.util.LinkedDirectedGraph;
 
 public class Game {
 

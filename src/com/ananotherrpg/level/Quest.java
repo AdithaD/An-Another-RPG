@@ -1,7 +1,5 @@
 package com.ananotherrpg.level;
 
-import java.util.List;
-
 public class Quest {
 	private int questId;
 	

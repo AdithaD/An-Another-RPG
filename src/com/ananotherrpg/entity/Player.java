@@ -25,9 +25,5 @@ public class Player extends Combatant {
 	public void gainXp(int xpgain) {
 		xp += xpgain;
 	}
-	
-	private void levelUp() {
-		level += 1;
-		
-	}
+
 }

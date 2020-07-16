@@ -1,4 +1,4 @@
-package com.ananotherrpg.entity;
+package com.ananotherrpg.entity.dialogue;
 
 public class DialogueLine {
     private String dialogue;

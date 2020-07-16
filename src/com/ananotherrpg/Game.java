@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import com.ananotherrpg.entity.Combatant;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
+import com.ananotherrpg.entity.dialogue.DialogueManager;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.ItemStack;
@@ -197,24 +198,20 @@ public class Game {
 	}
 
 	private void initiateDialogue(Entity target) {
-		LinkedDirectedGraph<DialogueLine, String> dialogueGraph = target.getDialogueGraph();
-		DialogueLine currentLine = dialogueGraph.getFirstNode();
+		DialogueManager manager = new DialogueManager(target.getDialogueGraph());
 
-		System.out.println(currentLine.getDialogue());
-		while (dialogueGraph.hasNextDialogue(currentLine)) {
-			Map<String, Link<DialogueLine, String>> options = dialogueGraph.getLinks(currentLine).stream()
-					.collect(Collectors.toMap(Link::getResponse, Function.identity()));
-
-			List<String> optionsText = new ArrayList<String>(options.keySet());
+		System.out.println(manager.getDialogue());
+		while (manager.hasMoreDialogue()) {
+			Map<String, Link<DialogueLine, String>> linkToLinkDataMap = manager.generateLinkToLinkDataMap();
+			List<String> optionsText = new ArrayList<String>(linkToLinkDataMap.keySet());
 
 			listStrings(optionsText);
 
-			Link<DialogueLine, String> linkToTraverse = options.get(queryUserAgainstStrings(optionsText, s));
-
-			currentLine = linkToTraverse.getIncident();
-
-			System.out.println(currentLine.getDialogue());
+			manager.traverseLink(linkToLinkDataMap.get(queryUserAgainstStrings(optionsText, s)));
+			System.out.println(manager.getDialogue());
 		}
+
+		campaign.getQuestsLog().addAll(manager.getNewQuests());
 	}
 
 	private void moveTo() {

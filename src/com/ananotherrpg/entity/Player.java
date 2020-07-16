@@ -2,11 +2,11 @@ package com.ananotherrpg.entity;
 
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Weapon;
+import com.ananotherrpg.level.Quest;
 
 public class Player extends Combatant {
 	
 	private int xp;
-	
 	
 	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, Weapon equippedWeapon, Boolean isDead) {
 		super(name, hp, maxHealth, inventory, initiative, level, equippedWeapon, false);
@@ -24,6 +24,10 @@ public class Player extends Combatant {
 
 	public void gainXp(int xpgain) {
 		xp += xpgain;
+	}
+
+	public void addQuest(Quest quest) {
+
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.ananotherrpg.entity.dialogue;
 
+import com.ananotherrpg.entity.Player;
+
 public class DialogueLine {
     private String dialogue;
 
@@ -9,5 +11,9 @@ public class DialogueLine {
 
     public String getDialogue(){
         return dialogue;
+    }
+
+    public void visit(DialogueManager manager){
+        manager.accept(this);
     }
 }

@@ -22,4 +22,10 @@ public class KillObjective extends Objective {
 		}
 	}
 
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return description;
+	}
+
 }

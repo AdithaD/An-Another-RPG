@@ -32,9 +32,4 @@ public class ItemStack implements Identifiable {
 	public String getName() {
 		return item.getName();
 	}
-
-	@Override
-	public Boolean isKnown() {
-		return isKnown;
-	}
 }

@@ -1,14 +1,14 @@
 package com.ananotherrpg.entity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.util.Link;
 import com.ananotherrpg.util.LinkedDirectedGraph;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Entity implements Identifiable {
 	private int entityId;
@@ -22,7 +22,6 @@ public class Entity implements Identifiable {
 	protected Inventory inventory;
 
 	protected Boolean isDead;
-	protected Boolean isKnown;
 
 	public Entity(int entityId) {
 		this.entityId = entityId;
@@ -34,7 +33,6 @@ public class Entity implements Identifiable {
 		this.maxHealth = maxHealth;
 		this.inventory = inventory;
 		this.isDead = false;
-		this.isKnown = true;
 		this.dialogue = Entity.NO_DIALOGUE;
 	}
 
@@ -44,8 +42,7 @@ public class Entity implements Identifiable {
 		this.hp = hp;
 		this.maxHealth = maxHealth;
 		this.inventory = inventory;
-		this.isDead = isDead;
-		this.isKnown = isKnown;
+		this.isDead = isDead;;
 		this.dialogue = dialogue;
 	}
 
@@ -55,10 +52,6 @@ public class Entity implements Identifiable {
 
 	public void setIsDead(Boolean isDead) {
 		this.isDead = isDead;
-	}
-
-	public Boolean isKnown() {
-		return isKnown;
 	}
 
 	public String getName() {

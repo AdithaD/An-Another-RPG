@@ -15,12 +15,12 @@ public class DialogueManager {
     private LinkedDirectedGraph<DialogueLine, String> dialogueGraph;
     private DialogueLine currentLine;
 
-    private List<Quest> newQuests;
+    private List<Integer> newQuestIds;
 
     public DialogueManager(LinkedDirectedGraph<DialogueLine, String> dialogueGraph) {
         this.dialogueGraph = dialogueGraph;
         this.currentLine = dialogueGraph.getFirstNode();
-        this.newQuests = new ArrayList<Quest>();
+        this.newQuestIds = new ArrayList<Integer>();
     }
 
     public void traverseLink(Link<DialogueLine, String> linkToTraverse){
@@ -43,7 +43,7 @@ public class DialogueManager {
 	}
 
     public void accept(QuestDialogueLine questDialogueLine){
-        newQuests.add(questDialogueLine.getQuest());
+        newQuestIds.add(questDialogueLine.getQuest());
     }
 
     public DialogueLine getCurrentLine(){
@@ -54,7 +54,7 @@ public class DialogueManager {
         return currentLine.getDialogue();
     }
 
-	public List<Quest> getNewQuests() {
-		return newQuests;
+	public List<Integer> getNewQuests() {
+		return newQuestIds;
 	}
 }

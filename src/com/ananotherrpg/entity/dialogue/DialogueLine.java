@@ -1,7 +1,5 @@
 package com.ananotherrpg.entity.dialogue;
 
-import com.ananotherrpg.entity.Player;
-
 public class DialogueLine {
     private String dialogue;
 

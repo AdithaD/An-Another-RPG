@@ -1,21 +1,47 @@
 package com.ananotherrpg.level;
 
-public class Quest {
+import java.util.List;
+
+import com.ananotherrpg.Identifiable;
+
+public class Quest implements Identifiable {
 	private int questId;
-	
-	private Objective[] objectives;
-	private Quest[] subquests;
-	
+
+	private String questName;
+	private List<Objective> objectives;
+
 	private boolean isComplete;
-	private boolean isActive;
-	public Quest(int questId, Objective[] objectives, Quest[] quests, boolean isComplete, boolean isActive) {
+
+	public Quest(int questId, String questName, List<Objective> objectives, boolean isComplete) {
 		super();
 		this.questId = questId;
 		this.objectives = objectives;
-		this.subquests = quests;
 		this.isComplete = isComplete;
-		this.isActive = isActive;
+		this.questName = questName;
 	}
-	
-	
+
+	public Quest(int questId, List<Objective> objectives, boolean isComplete, boolean isActive) {
+		super();
+		this.questId = questId;
+		this.objectives = objectives;
+		this.isComplete = isComplete;
+
+	}
+
+	public int getId() {
+		return questId;
+	}
+
+	public String getQuestName() {
+		return questName;
+	}
+
+	@Override
+	public String getName() {
+		return questName;
+	}
+
+	public List<Objective> getObjectives() {
+		return objectives;
+	}
 }

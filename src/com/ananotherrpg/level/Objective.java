@@ -1,6 +1,7 @@
 package com.ananotherrpg.level;
 
-public abstract class Objective {
+import com.ananotherrpg.*;
+public abstract class Objective implements Identifiable{
 	protected int objectiveId;
 	protected String description;
 	

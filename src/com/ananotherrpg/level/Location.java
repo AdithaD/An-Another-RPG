@@ -56,10 +56,6 @@ public class Location implements Identifiable{
 			return description;
 		}
 
-		public Boolean isKnown() {
-			return isKnown;
-		}
-
 		public void setKnown(boolean isKnown) {
 			this.isKnown = isKnown;
 		}	

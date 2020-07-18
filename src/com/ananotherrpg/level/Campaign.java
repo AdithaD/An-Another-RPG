@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
@@ -15,7 +16,6 @@ import com.ananotherrpg.inventory.ItemStack;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
-import com.ananotherrpg.io.InterruptedQueryException;
 import com.ananotherrpg.util.Link;
 
 public class Campaign {
@@ -49,39 +49,39 @@ public class Campaign {
 		if (campaignState.currentLocation.getPermanentEntities().isEmpty()) {
 			io.println("There is no one to talk to");
 		} else {
-			try {
-				io.println("Who would you like to talk to?");
-				Entity target = io.listAndQueryUserInputAgainstIdentifiers(
-						campaignState.currentLocation.getPermanentEntities(), ListType.NUMBERED,
-						SelectionMethod.NUMBERED);
 
-				initiateDialogue(target);
-			} catch (InterruptedQueryException e) {
-				io.println("You decide otherwise...");
+			io.println("Who would you like to talk to?");
+			Optional<Entity> opEntity = io.listAndQueryUserInputAgainstIdentifiers(
+					campaignState.currentLocation.getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED);
+
+			if (opEntity.isPresent()) {
+				initiateDialogue(opEntity.get());
+			} else {
+				io.println("You decide otherwise");
 			}
+
 		}
 	}
 
 	private void initiateDialogue(Entity target) {
-		try {
-			DialogueManager manager = new DialogueManager(target.getDialogueGraph());
 
+		DialogueManager manager = new DialogueManager(target.getDialogueGraph());
+
+		io.println(manager.getDialogue());
+		while (manager.hasMoreDialogue()) {
+			Map<String, Link<DialogueLine, String>> linkToLinkDataMap = manager.generateLinkToLinkDataMap();
+			List<String> optionsText = new ArrayList<String>(linkToLinkDataMap.keySet());
+
+			String opLinkData = io.listAndQueryUserInputAgainstStringsWithoutExit(optionsText, ListType.NUMBERED,
+					SelectionMethod.NUMBERED);
+
+			manager.traverseLink(linkToLinkDataMap.get(opLinkData));
 			io.println(manager.getDialogue());
-			while (manager.hasMoreDialogue()) {
-				Map<String, Link<DialogueLine, String>> linkToLinkDataMap = manager.generateLinkToLinkDataMap();
-				List<String> optionsText = new ArrayList<String>(linkToLinkDataMap.keySet());
-
-				manager.traverseLink(linkToLinkDataMap.get(io.listAndQueryUserInputAgainstStrings(optionsText,
-						ListType.NUMBERED, SelectionMethod.NUMBERED)));
-				io.println(manager.getDialogue());
-			}
-
-			manager.getNewQuests().forEach(id -> {
-				campaignState.activeQuests.add(questLookup.get(id));
-			});
-		} catch (InterruptedQueryException e) {
-			io.println("You decide otherwise...");
 		}
+
+		manager.getNewQuests().forEach(id -> {
+			campaignState.activeQuests.add(questLookup.get(id));
+		});
 	}
 
 	private void moveTo() {
@@ -90,16 +90,18 @@ public class Campaign {
 		if (adjacentLocations.isEmpty()) {
 			io.println("There is no where to go to!");
 		} else {
-			try {
-				io.println("Where would you like to go ?");
+			io.println("Where would you like to go ?");
 
-				campaignState.setCurrentLocation(io.listAndQueryUserInputAgainstIdentifiers(adjacentLocations,
-						ListType.NUMBERED, SelectionMethod.NUMBERED));
+			Optional<Location> opLocation = io.listAndQueryUserInputAgainstIdentifiers(adjacentLocations,
+					ListType.NUMBERED, SelectionMethod.NUMBERED);
+
+			if (opLocation.isPresent()) {
+				campaignState.setCurrentLocation(opLocation.get());
 				io.println("You move to " + campaignState.currentLocation.getName());
-
-			} catch (InterruptedQueryException e) {
-				io.println("You decide otherwise...");
+			} else {
+				io.println("Staying here is fine for now...");
 			}
+
 		}
 
 	}
@@ -139,12 +141,15 @@ public class Campaign {
 			io.listIdentifiers(campaignState.activeQuests, ListType.NUMBERED);
 
 			io.println("Enter a number to get more information, or type exit to back out");
-			try {
-				Quest selectedQuest = io.queryUserInputAgainstIdentifiers(campaignState.activeQuests,
-						SelectionMethod.NUMBERED);
+
+			Optional<Quest> opQuest = io.queryUserInputAgainstIdentifiers(campaignState.activeQuests,
+					SelectionMethod.NUMBERED);
+
+			if (opQuest.isPresent()) {
+				Quest selectedQuest = opQuest.get();
 
 				io.listIdentifiers(selectedQuest.getObjectives(), ListType.BULLET);
-			} catch (InterruptedQueryException e) {
+			} else {
 				io.println("You awaken from your deep concentration");
 			}
 		}
@@ -160,28 +165,31 @@ public class Campaign {
 
 	public void loop() {
 		io.println("What would you like to do? (Type help for options)");
-		String input = io.queryUserInputAgainstStrings(options, SelectionMethod.TEXT);
+		Optional<String> opInput = io.queryUserInputAgainstStrings(options, SelectionMethod.TEXT);
 
-		switch (input) {
-		case "Look around":
-			lookAround();
-			break;
-		case "Move to":
-			moveTo();
-			break;
-		case "Talk":
-			talk();
-			break;
-		case "View Quests":
-			viewQuests();
-			break;
-		case "Help":
-			io.listStrings(options, ListType.ONE_LINE);
-			break;
-		case "Exit":
+		if (opInput.isPresent()) {
+			switch (opInput.get()) {
+				case "Look around":
+					lookAround();
+					break;
+				case "Move to":
+					moveTo();
+					break;
+				case "Talk":
+					talk();
+					break;
+				case "View Quests":
+					viewQuests();
+					break;
+				case "Help":
+					io.listStrings(options, ListType.ONE_LINE);
+					break;
+			}
+		} else {
+			io.println("Returning to main menu");
 			shouldExitCampaign = true;
-			break;
 		}
+
 	}
 
 	public boolean shouldExitCampaign() {

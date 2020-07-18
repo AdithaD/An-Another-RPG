@@ -153,7 +153,7 @@ public class Game {
 		ArrayList<String> options = new ArrayList<String>(
 				Arrays.asList("Create a new campaign", "Load a previous campaign", "Quit :("));
 
-		String input = io.listAndQueryUserInputAgainstStrings(options, ListType.NUMBERED, SelectionMethod.NUMBERED);
+		String input = io.listAndQueryUserInputAgainstStringsWithoutExit(options, ListType.NUMBERED, SelectionMethod.NUMBERED);
 
 		Game game;
 		if (input == options.get(0)) {

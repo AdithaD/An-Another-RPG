@@ -33,7 +33,7 @@ public class Game {
 	private static IOManager io;
 
 	private enum State {
-		MENU, GAME, COMBAT
+		MENU, GAME
 	}
 
 	private State gameState = State.MENU;

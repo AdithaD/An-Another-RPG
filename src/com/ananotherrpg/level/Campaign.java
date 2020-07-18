@@ -55,33 +55,18 @@ public class Campaign {
 					campaignState.currentLocation.getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED);
 
 			if (opEntity.isPresent()) {
-				initiateDialogue(opEntity.get());
+				DialogueManager manager = new DialogueManager(opEntity.get().getDialogueGraph(), io);
+
+				manager.initiateDialogue();
+
+				manager.getNewQuests().forEach(id -> {
+					campaignState.activeQuests.add(questLookup.get(id));
+				});
 			} else {
 				io.println("You decide otherwise");
 			}
 
 		}
-	}
-
-	private void initiateDialogue(Entity target) {
-
-		DialogueManager manager = new DialogueManager(target.getDialogueGraph());
-
-		io.println(manager.getDialogue());
-		while (manager.hasMoreDialogue()) {
-			Map<String, Link<DialogueLine, String>> linkToLinkDataMap = manager.generateLinkToLinkDataMap();
-			List<String> optionsText = new ArrayList<String>(linkToLinkDataMap.keySet());
-
-			String opLinkData = io.listAndQueryUserInputAgainstStringsWithoutExit(optionsText, ListType.NUMBERED,
-					SelectionMethod.NUMBERED);
-
-			manager.traverseLink(linkToLinkDataMap.get(opLinkData));
-			io.println(manager.getDialogue());
-		}
-
-		manager.getNewQuests().forEach(id -> {
-			campaignState.activeQuests.add(questLookup.get(id));
-		});
 	}
 
 	private void moveTo() {

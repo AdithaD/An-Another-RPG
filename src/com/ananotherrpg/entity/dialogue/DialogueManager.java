@@ -1,26 +1,46 @@
 package com.ananotherrpg.entity.dialogue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.ananotherrpg.level.Quest;
+import com.ananotherrpg.io.IOManager;
+import com.ananotherrpg.io.IOManager.ListType;
+import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.util.Link;
 import com.ananotherrpg.util.LinkedDirectedGraph;
 
 public class DialogueManager {
+
+    private IOManager io;
     private LinkedDirectedGraph<DialogueLine, String> dialogueGraph;
     private DialogueLine currentLine;
 
     private List<Integer> newQuestIds;
 
-    public DialogueManager(LinkedDirectedGraph<DialogueLine, String> dialogueGraph) {
+    public DialogueManager(LinkedDirectedGraph<DialogueLine, String> dialogueGraph, IOManager io) {
+        this.io = io;
         this.dialogueGraph = dialogueGraph;
         this.currentLine = dialogueGraph.getFirstNode();
         this.newQuestIds = new ArrayList<Integer>();
+    }
+
+    public void initiateDialogue(){
+        
+		io.println(getDialogue());
+		while (hasMoreDialogue()) {
+			Map<String, Link<DialogueLine, String>> linkToLinkDataMap = generateLinkToLinkDataMap();
+			List<String> optionsText = new ArrayList<String>(linkToLinkDataMap.keySet());
+
+			String opLinkData = io.listAndQueryUserInputAgainstStringsWithoutExit(optionsText, ListType.NUMBERED,
+					SelectionMethod.NUMBERED);
+
+			traverseLink(linkToLinkDataMap.get(opLinkData));
+			io.println(getDialogue());
+		}
+
     }
 
     public void traverseLink(Link<DialogueLine, String> linkToTraverse){

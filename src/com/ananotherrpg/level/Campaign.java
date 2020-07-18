@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.entity.dialogue.DialogueLine;
+import com.ananotherrpg.entity.Player;
 import com.ananotherrpg.entity.dialogue.DialogueManager;
 import com.ananotherrpg.inventory.ItemStack;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
-import com.ananotherrpg.util.Link;
+import com.ananotherrpg.util.Graph;
 
 public class Campaign {
 
@@ -27,32 +27,44 @@ public class Campaign {
 	private String introduction;
 	private Map<Integer, Quest> questLookup;
 
-	private CampaignState campaignState;
+	private Graph<Location> locations;
+	private Location currentLocation;
+
+	private List<Quest> activeQuests;
+
+	private Player player;
+
+	public boolean isComplete;
 
 	private IOManager io;
 	private boolean shouldExitCampaign;
 
-	public Campaign(int campaignId, String introduction, List<Quest> campaignQuests, CampaignState campaignState,
-			IOManager io) {
+	public Campaign(int campaignId, String introduction, List<Quest> campaignQuests, Graph<Location> locations,
+			Location currentLocation, List<Quest> activeQuests, Player player, boolean isComplete, IOManager io) {
 		super();
 		this.introduction = introduction;
 		this.campaignId = campaignId;
 		this.questLookup = campaignQuests.stream().collect(Collectors.toMap(Quest::getId, Function.identity()));
-		this.campaignState = campaignState;
 		this.shouldExitCampaign = false;
+
+		this.locations = locations;
+		this.currentLocation = currentLocation;
+		this.activeQuests = activeQuests;
+		this.player = player;
+		this.isComplete = isComplete;
 
 		this.io = io;
 
 	}
 
 	private void talk() {
-		if (campaignState.currentLocation.getPermanentEntities().isEmpty()) {
+		if (currentLocation.getPermanentEntities().isEmpty()) {
 			io.println("There is no one to talk to");
 		} else {
 
 			io.println("Who would you like to talk to?");
 			Optional<Entity> opEntity = io.listAndQueryUserInputAgainstIdentifiers(
-					campaignState.currentLocation.getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED);
+					currentLocation.getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED);
 
 			if (opEntity.isPresent()) {
 				DialogueManager manager = new DialogueManager(opEntity.get().getDialogueGraph(), io);
@@ -60,7 +72,7 @@ public class Campaign {
 				manager.initiateDialogue();
 
 				manager.getNewQuests().forEach(id -> {
-					campaignState.activeQuests.add(questLookup.get(id));
+					activeQuests.add(questLookup.get(id));
 				});
 			} else {
 				io.println("You decide otherwise");
@@ -70,7 +82,7 @@ public class Campaign {
 	}
 
 	private void moveTo() {
-		List<Location> adjacentLocations = campaignState.locations.getAdjacentNodes(campaignState.currentLocation);
+		List<Location> adjacentLocations = locations.getAdjacentNodes(currentLocation);
 
 		if (adjacentLocations.isEmpty()) {
 			io.println("There is no where to go to!");
@@ -81,8 +93,8 @@ public class Campaign {
 					ListType.NUMBERED, SelectionMethod.NUMBERED);
 
 			if (opLocation.isPresent()) {
-				campaignState.setCurrentLocation(opLocation.get());
-				io.println("You move to " + campaignState.currentLocation.getName());
+				currentLocation = opLocation.get();
+				io.println("You move to " + currentLocation.getName());
 			} else {
 				io.println("Staying here is fine for now...");
 			}
@@ -92,12 +104,12 @@ public class Campaign {
 	}
 
 	private void lookAround() {
-		io.println(campaignState.currentLocation.getDescription());
+		io.println(currentLocation.getDescription());
 		io.println("You do a quick whirl and you see:");
 
-		List<Entity> permanentEntities = campaignState.currentLocation.getPermanentEntities();
-		List<ItemStack> itemStacks = campaignState.currentLocation.getItemStacks();
-		List<Location> accessibleLocations = campaignState.getAccessibleLocations();
+		List<Entity> permanentEntities = currentLocation.getPermanentEntities();
+		List<ItemStack> itemStacks = currentLocation.getItemStacks();
+		List<Location> accessibleLocations = getAccessibleLocations();
 
 		if (permanentEntities.isEmpty()) {
 			io.println("There is noone in this area");
@@ -119,16 +131,15 @@ public class Campaign {
 	}
 
 	private void viewQuests() {
-		if (campaignState.activeQuests.isEmpty()) {
+		if (activeQuests.isEmpty()) {
 			io.println("I have no active quests... ");
 		} else {
 			io.println("Your current quests are: ");
-			io.listIdentifiers(campaignState.activeQuests, ListType.NUMBERED);
+			io.listIdentifiers(activeQuests, ListType.NUMBERED);
 
 			io.println("Enter a number to get more information, or type exit to back out");
 
-			Optional<Quest> opQuest = io.queryUserInputAgainstIdentifiers(campaignState.activeQuests,
-					SelectionMethod.NUMBERED);
+			Optional<Quest> opQuest = io.queryUserInputAgainstIdentifiers(activeQuests, SelectionMethod.NUMBERED);
 
 			if (opQuest.isPresent()) {
 				Quest selectedQuest = opQuest.get();
@@ -138,10 +149,6 @@ public class Campaign {
 				io.println("You awaken from your deep concentration");
 			}
 		}
-	}
-
-	public CampaignState getCampaignState() {
-		return campaignState;
 	}
 
 	public static Campaign loadCampaignFromXML(File file) {
@@ -177,11 +184,15 @@ public class Campaign {
 
 	}
 
+	public void start() {
+		io.println(introduction);
+	}
+
 	public boolean shouldExitCampaign() {
 		return shouldExitCampaign;
 	}
 
-	public void start() {
-		io.println(introduction);
+	private List<Location> getAccessibleLocations() {
+		return locations.getAdjacentNodes(currentLocation);
 	}
 }

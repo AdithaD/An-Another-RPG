@@ -17,7 +17,6 @@ import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.Campaign;
-import com.ananotherrpg.level.CampaignState;
 import com.ananotherrpg.level.KillObjective;
 import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.Objective;
@@ -122,13 +121,11 @@ public class Game {
 		List<Quest> campaignQuests = new ArrayList<Quest>();
 		campaignQuests.add(killAngryBby);
 
-		CampaignState campaignState = new CampaignState(locations, lobby, new ArrayList<Quest>(),
-				new Player("Mark", 20, 20, new Inventory(), 5, 1), false);
-
 		// 6. Campaign
 		Campaign testCampaign = new Campaign(campaignID,
 				"A beautiful hotel lobby with an inconspicuous room to the side appears before you", campaignQuests,
-				campaignState, io);
+				locations, lobby, new ArrayList<Quest>(),
+				new Player("Mark", 20, 20, new Inventory(), 5, 1), false, io);
 
 		campaign = testCampaign;
 	}

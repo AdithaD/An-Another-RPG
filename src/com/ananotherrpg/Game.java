@@ -8,7 +8,6 @@ import com.ananotherrpg.entity.Combatant;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.Player;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
-import com.ananotherrpg.entity.dialogue.DialogueManager;
 import com.ananotherrpg.entity.dialogue.QuestDialogueLine;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
@@ -20,7 +19,6 @@ import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.Campaign;
 import com.ananotherrpg.level.KillObjective;
 import com.ananotherrpg.level.Location;
-import com.ananotherrpg.level.LocationManager;
 import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.Quest;
 import com.ananotherrpg.util.DirectedDataGraph;
@@ -121,17 +119,15 @@ public class Game {
 		List<Quest> campaignQuests = new ArrayList<Quest>();
 		campaignQuests.add(killAngryBby);
 
+
+		Player player = new Player("Kim Tan", 100, 100, new Inventory(), 5, 1, 0);
+		
+
 		// 6. Campaign
 		Campaign testCampaign = new Campaign(campaignID,
-				"A beautiful hotel lobby with an inconspicuous room to the side appears before you", campaignQuests,
-				locations, lobby, new ArrayList<Quest>(),
-				new Player("Mark", 20, 20, new Inventory(), 5, 1, new LocationManager(), new DialogueManager(campaignQuests)), false);
+				"A beautiful hotel lobby with an inconspicuous room to the side appears before you", campaignQuests, locations, lobby, player, false);
 
 		campaign = testCampaign;
-	}
-
-	public Game(Campaign campaign) {
-
 	}
 
 	public static void main(String[] args) {

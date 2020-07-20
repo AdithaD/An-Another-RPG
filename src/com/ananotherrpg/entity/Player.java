@@ -21,36 +21,37 @@ import com.ananotherrpg.level.Quest;
 
 public class Player extends Combatant {
 
-	private final ArrayList<String> options = new ArrayList<String>(
-			Arrays.asList(new String[] { "Look around", "Move to", "Examine", "Talk", "View Quests", "View Inventory", "Pick Up", "Help" }));
-	
+	private final ArrayList<String> options = new ArrayList<String>(Arrays.asList(new String[] { "Look around",
+			"Move to", "Examine", "Talk", "View Quests", "View Inventory", "Pick Up", "Help" }));
+
 	private int xp;
+
 	private LocationManager locationManager;
 	private DialogueManager dialogueManager;
-
-	private List<Quest> activeQuests;
+	private QuestMananger questManager;
 
 	private boolean shouldExitCampaign = false;
 
-	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, Weapon equippedWeapon, Boolean isDead, LocationManager locationManager, DialogueManager dialogueManager) {
+	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, int xp,
+			Weapon equippedWeapon, Boolean isDead) {
 		super(name, hp, maxHealth, inventory, initiative, level, equippedWeapon, false);
 
-		this.locationManager = locationManager;
-		this.dialogueManager = dialogueManager;
-
-		xp = 0;
+		this.xp = xp;
 	}
-	
-	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, LocationManager locationManager, DialogueManager dialogueManager) {
-		super(name, hp, maxHealth, inventory, initiative, level, Weapon.UNARMED, false );
-		xp = 0;
+
+	public Player(String name, int hp, int maxHealth, Inventory inventory, int initiative, int level, int xp) {
+		super(name, hp, maxHealth, inventory, initiative, level, Weapon.UNARMED, false);
+		this.xp = xp;
 		equippedWeapon = Weapon.UNARMED;
-	
-		this.locationManager = locationManager;
-		this.dialogueManager = dialogueManager;
 	}
 
-	public void loop(){
+	public void attachManagers(LocationManager locationManager, DialogueManager dialogueManager, QuestMananger questMananger){
+		this.locationManager = locationManager;
+		this.dialogueManager = dialogueManager;
+		this.questManager = questMananger;
+	}
+
+	public void loop() {
 		IOManager.println("What would you like to do? (Type help for options)");
 		Optional<String> opInput = IOManager.queryUserInputAgainstStrings(options, SelectionMethod.TEXT);
 
@@ -66,7 +67,7 @@ public class Player extends Combatant {
 					talk();
 					break;
 				case "View Quests":
-					viewQuests();
+					questManager.viewQuests();
 					break;
 				case "View Inventory":
 					viewInventory();
@@ -94,12 +95,13 @@ public class Player extends Combatant {
 
 			IOManager.println("Who would you like to talk to?");
 			Optional<Entity> opEntity = IOManager.listAndQueryUserInputAgainstIdentifiers(
-					locationManager.getPermanentEntitiesInCurrentLocation(), ListType.NUMBERED, SelectionMethod.NUMBERED);
+					locationManager.getPermanentEntitiesInCurrentLocation(), ListType.NUMBERED,
+					SelectionMethod.NUMBERED);
 
 			if (opEntity.isPresent()) {
 				dialogueManager.initiateDialogue(opEntity.get());
 
-				activeQuests.addAll(dialogueManager.getNewQuests());
+				questManager.addNewQuestsById(dialogueManager.getNewQuests());
 			} else {
 				IOManager.println("You decide otherwise");
 			}
@@ -115,46 +117,27 @@ public class Player extends Combatant {
 		locationManager.lookAround();
 	}
 
-	public void examine(){
-		List<? extends Identifiable> identifiables = locationManager.getListOfIdentifiablesInCurrentLocation(); 
+	public void examine() {
+		List<? extends Identifiable> identifiables = locationManager.getListOfIdentifiablesInCurrentLocation();
 
 		IOManager.println("What would you like to examine: (Type its name)");
-		Optional<? extends Identifiable> opIdentifiable = IOManager.queryUserInputAgainstIdentifiers(identifiables, SelectionMethod.TEXT);
+		Optional<? extends Identifiable> opIdentifiable = IOManager.queryUserInputAgainstIdentifiers(identifiables,
+				SelectionMethod.TEXT);
 
-		if(opIdentifiable.isPresent()){
+		if (opIdentifiable.isPresent()) {
 			IOManager.println(opIdentifiable.get().getDetails());
-		}else{
+		} else {
 			IOManager.println("You know enough already. Evidently...");
 		}
 	}
 
-	public void viewQuests() {
-		if (activeQuests.isEmpty()) {
-			IOManager.println("I have no active quests... ");
-		} else {
-			IOManager.println("Your current quests are: ");
-			IOManager.listStrings(activeQuests.stream().map(Quest::getName).collect(Collectors.toList()), ListType.NUMBERED);
-
-			IOManager.println("Enter a number to get more information, or type exit to back out");
-
-			Optional<Quest> opQuest = IOManager.queryUserInputAgainstCustomMap(activeQuests, Quest::getName, SelectionMethod.NUMBERED);
-
-			if (opQuest.isPresent()) {
-				Quest selectedQuest = opQuest.get();
-
-				IOManager.listStrings(selectedQuest.getObjectives().stream().map(Objective::getDescription).collect(Collectors.toList()),ListType.BULLET);
-			} else {
-				IOManager.println("You awaken from your deep concentration");
-			}
-		}
-	}
-
 	public void pickUp() {
-		Optional<ItemStack> opItem = IOManager.listAndQueryUserInputAgainstIdentifiers(locationManager.getCurrentLocation().getItemStacks(), ListType.NUMBERED, SelectionMethod.NUMBERED);
+		Optional<ItemStack> opItem = IOManager.listAndQueryUserInputAgainstIdentifiers(
+				locationManager.getCurrentLocation().getItemStacks(), ListType.NUMBERED, SelectionMethod.NUMBERED);
 
-		if(opItem.isPresent()){
+		if (opItem.isPresent()) {
 			inventory.addToInventory(opItem.get());
-		}else{
+		} else {
 			IOManager.println("Your rucksack is doesn't need another item, you say.");
 		}
 	}
@@ -164,29 +147,30 @@ public class Player extends Combatant {
 		IOManager.listIdentifiers(inventory.getItemStacks(), ListType.NUMBERED);
 
 		IOManager.println("Enter a number to interact with that Item");
-		Optional<ItemStack> opItemStack = IOManager.queryUserInputAgainstIdentifiers(inventory.getItemStacks(), SelectionMethod.NUMBERED);
+		Optional<ItemStack> opItemStack = IOManager.queryUserInputAgainstIdentifiers(inventory.getItemStacks(),
+				SelectionMethod.NUMBERED);
 
-		if(opItemStack.isPresent()){
+		if (opItemStack.isPresent()) {
 			opItemStack.get().getItem().use(this);
-		}else{
+		} else {
 
 		}
-			
+
 	}
 
 	public void accept(Item item) {
 		IOManager.println(item.getName() + " doesn't have much use right now!");
-    }
-    
-    public void equip(Weapon weapon){
-		if(IOManager.askYesOrNoQuestion("Would you like to equip this weapon?")){
+	}
+
+	public void equip(Weapon weapon) {
+		if (IOManager.askYesOrNoQuestion("Would you like to equip this weapon?")) {
 			IOManager.println("You have equipped " + weapon.getName());
-		}else{
+		} else {
 			equippedWeapon = weapon;
 		}
 	}
-	
-	public boolean shouldExitCampaign(){
+
+	public boolean shouldExitCampaign() {
 		return shouldExitCampaign;
 	}
 

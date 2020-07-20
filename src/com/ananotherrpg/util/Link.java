@@ -30,10 +30,10 @@ public class Link<T>{
     }
 
     public T getOther(T node){
-        if(node == nodes.get(1)){
-            return nodes.get(2);
-        }else if(node == nodes.get(2)){
+        if(node == nodes.get(0)){
             return nodes.get(1);
+        }else if(node == nodes.get(1)){
+            return nodes.get(0);
         }else{
             throw new InvalidParameterException();
         }

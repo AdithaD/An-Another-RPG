@@ -11,7 +11,6 @@ import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
-import com.ananotherrpg.level.Quest;
 import com.ananotherrpg.util.DirectedDataLink;
 import com.ananotherrpg.util.DirectedDataGraph;
 
@@ -19,12 +18,10 @@ public class DialogueManager {
 
     private DirectedDataGraph<DialogueLine, String> dialogueGraph;
     private DialogueLine currentLine;
-
-    private Map<Integer, Quest> camapignQuestLookup;
     private List<Integer> newQuestIds;
 
-    public DialogueManager(List<Quest> campaignQuestLookup) {
-        this.camapignQuestLookup = campaignQuestLookup.stream().collect(Collectors.toMap(Quest::getId, Function.identity()));
+    public DialogueManager() {
+       
         this.newQuestIds = new ArrayList<Integer>();
     }
 
@@ -48,7 +45,7 @@ public class DialogueManager {
 
     }
 
-    public void traverseLink(DirectedDataLink<DialogueLine, String> linkToTraverse){
+    private void traverseLink(DirectedDataLink<DialogueLine, String> linkToTraverse){
         currentLine = linkToTraverse.getIncident();
         currentLine.visit(this);
     }
@@ -73,10 +70,8 @@ public class DialogueManager {
         return currentLine.getDialogue();
     }
 
-	public List<Quest> getNewQuests() {
-        List<Quest> newQuests  = newQuestIds.stream().map(e -> camapignQuestLookup.get(e)).collect(Collectors.toList());
-        newQuests.removeAll(newQuests);
-		return newQuests;
+	public List<Integer> getNewQuests() {
+		return newQuestIds;
     }
     
     public static final DirectedDataGraph<DialogueLine,String> NO_DIALOGUE;

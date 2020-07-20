@@ -22,8 +22,8 @@ public class KillObjective extends Objective {
 		}
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
-
 }

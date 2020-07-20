@@ -15,7 +15,12 @@ import com.ananotherrpg.util.Graph;
 public class LocationManager {
 
     private Graph<Location> campaignLocationGraph;
-    private Location currentLocation; 
+	private Location currentLocation; 
+	
+	public LocationManager(Graph<Location> campaignLocationGraph, Location currentLocation) {
+		this.campaignLocationGraph = campaignLocationGraph;
+		this.currentLocation = currentLocation;
+	}
 
     public Location getCurrentLocation(){
         return currentLocation;

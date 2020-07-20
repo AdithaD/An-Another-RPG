@@ -7,6 +7,7 @@ public abstract class Objective{
 	protected Location location;
 	
 	protected Boolean isActive = false;
+	protected Boolean isComplete = false;
 	
 	public Objective(int objectiveId, String description, Location location) {
 		super();
@@ -15,7 +16,15 @@ public abstract class Objective{
 		this.location = location;
 	}
 	
-	public abstract String getDescription();
+	public int getId(){
+		return objectiveId;
+	}
 
-	public abstract boolean isComplete();
+	public String getDescription(){
+		return description;
+	}
+
+	public boolean isComplete(){
+		return isComplete;
+	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.inventory.Inventory;
+import com.ananotherrpg.inventory.ItemStack;
 import com.ananotherrpg.util.Link;
 import com.ananotherrpg.util.LinkedDirectedGraph;
 
@@ -19,7 +20,7 @@ public class Entity implements Identifiable {
 
 	protected int hp;
 	protected int maxHealth;
-	protected Inventory inventory;
+	public Inventory inventory;
 
 	protected Boolean isDead;
 
@@ -58,6 +59,14 @@ public class Entity implements Identifiable {
 		return name;
 	}
 
+	public void addItemStackToInventory(ItemStack itemStack){
+		inventory.addToInventory(itemStack);
+	}
+
+	public Inventory getInventory(){
+		return inventory;
+	}
+
 	public LinkedDirectedGraph<DialogueLine, String> getDialogueGraph(){
 		return dialogue;
 	}
@@ -70,5 +79,10 @@ public class Entity implements Identifiable {
         noDialogueMap.putIfAbsent(noDialogueLine, new ArrayList<Link<DialogueLine, String>>());
 
         NO_DIALOGUE = new LinkedDirectedGraph<DialogueLine,String>(noDialogueMap, noDialogueLine);
-    }		
+    }
+
+	@Override
+	public String getDetails() {
+		return name;
+	}
 }

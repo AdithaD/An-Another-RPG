@@ -2,9 +2,7 @@ package com.ananotherrpg.level;
 
 import java.util.List;
 
-import com.ananotherrpg.Identifiable;
-
-public class Quest implements Identifiable {
+public class Quest{
 	private int questId;
 
 	private String questName;
@@ -32,11 +30,6 @@ public class Quest implements Identifiable {
 		return questId;
 	}
 
-	public String getQuestName() {
-		return questName;
-	}
-
-	@Override
 	public String getName() {
 		return questName;
 	}

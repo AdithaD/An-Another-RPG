@@ -1,5 +1,7 @@
 package com.ananotherrpg.inventory;
 
+import com.ananotherrpg.entity.Player;
+
 public class Weapon extends Item {
 	private int damage; 
 	private double criticalHitChance;
@@ -18,6 +20,11 @@ public class Weapon extends Item {
 
 	public int calculateDamage() {
 		return damage;
+	}
+
+	@Override
+	public void use(Player player){
+		player.equip(this);
 	}
 
 	public static final Weapon UNARMED = new Weapon("Fists", 2, 0.3, 5);

@@ -29,8 +29,6 @@ public class Game {
 
 	private Campaign campaign;
 
-	private static IOManager io;
-
 	private enum State {
 		MENU, GAME
 	}
@@ -87,7 +85,7 @@ public class Game {
 		lobbyItems.add(new ItemStack(sword, 1));
 
 		Location lobby = new Location("lobby", "An illustrious hotel lobby filled with an air of richness.",
-				lobbyEntities, lobbyItems, true);
+				lobbyEntities, lobbyItems);
 
 		ArrayList<ItemStack> room1Items = new ArrayList<ItemStack>();
 		room1Items.add(new ItemStack(sword, 1));
@@ -125,7 +123,7 @@ public class Game {
 		Campaign testCampaign = new Campaign(campaignID,
 				"A beautiful hotel lobby with an inconspicuous room to the side appears before you", campaignQuests,
 				locations, lobby, new ArrayList<Quest>(),
-				new Player("Mark", 20, 20, new Inventory(), 5, 1), false, io);
+				new Player("Mark", 20, 20, new Inventory(), 5, 1), false);
 
 		campaign = testCampaign;
 	}
@@ -135,7 +133,6 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
-		io = new IOManager();
 
 		while (!shouldExit) {
 			gotoMainMenu();
@@ -145,22 +142,22 @@ public class Game {
 	}
 
 	private static void gotoMainMenu() {
-		io.println("Welcome to an another rpg!");
+		IOManager.println("Welcome to an another rpg!");
 
 		ArrayList<String> options = new ArrayList<String>(
 				Arrays.asList("Create a new campaign", "Load a previous campaign", "Quit :("));
 
-		String input = io.listAndQueryUserInputAgainstStringsWithoutExit(options, ListType.NUMBERED, SelectionMethod.NUMBERED);
+		String input = IOManager.listAndQueryUserInputAgainstStringsWithoutExit(options, ListType.NUMBERED, SelectionMethod.NUMBERED);
 
 		Game game;
 		if (input == options.get(0)) {
 			game = new Game();
 			game.start();
 		} else if (input == options.get(1)) {
-			io.print("NOT IMPLEMENTED");
+			IOManager.print("NOT IMPLEMENTED");
 
 		} else if (input == options.get(2)) {
-			io.print("Goodbye");
+			IOManager.print("Goodbye");
 			shouldExit = true;
 		}
 	}
@@ -176,11 +173,6 @@ public class Game {
 				gameState = State.MENU;
 			}
 		}
-	}
-
-	private static Campaign chooseSave() {
-		return null;
-
 	}
 
 }

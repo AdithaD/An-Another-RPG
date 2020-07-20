@@ -14,14 +14,12 @@ import com.ananotherrpg.util.LinkedDirectedGraph;
 
 public class DialogueManager {
 
-    private IOManager io;
     private LinkedDirectedGraph<DialogueLine, String> dialogueGraph;
     private DialogueLine currentLine;
 
     private List<Integer> newQuestIds;
 
-    public DialogueManager(LinkedDirectedGraph<DialogueLine, String> dialogueGraph, IOManager io) {
-        this.io = io;
+    public DialogueManager(LinkedDirectedGraph<DialogueLine, String> dialogueGraph) {
         this.dialogueGraph = dialogueGraph;
         this.currentLine = dialogueGraph.getFirstNode();
         this.newQuestIds = new ArrayList<Integer>();
@@ -29,16 +27,16 @@ public class DialogueManager {
 
     public void initiateDialogue(){
         
-		io.println(getDialogue());
+		IOManager.println(getDialogue());
 		while (hasMoreDialogue()) {
 			Map<String, Link<DialogueLine, String>> linkToLinkDataMap = generateLinkToLinkDataMap();
 			List<String> optionsText = new ArrayList<String>(linkToLinkDataMap.keySet());
 
-			String opLinkData = io.listAndQueryUserInputAgainstStringsWithoutExit(optionsText, ListType.NUMBERED,
+			String opLinkData = IOManager.listAndQueryUserInputAgainstStringsWithoutExit(optionsText, ListType.NUMBERED,
 					SelectionMethod.NUMBERED);
 
 			traverseLink(linkToLinkDataMap.get(opLinkData));
-			io.println(getDialogue());
+			IOManager.println(getDialogue());
 		}
 
     }

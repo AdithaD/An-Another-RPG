@@ -1,6 +1,8 @@
 package com.ananotherrpg.inventory;
 
-public class Item{
+import com.ananotherrpg.entity.Player;
+
+public class Item {
 	protected int itemId;
 	
 	protected String name;
@@ -20,5 +22,7 @@ public class Item{
 		return name;
 	}
 	
-	
+	public void use(Player player){
+		player.accept(this);
+	}
 }

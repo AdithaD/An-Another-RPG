@@ -16,8 +16,6 @@ public class Location implements Identifiable{
 		private ArrayList<Entity> permanentEntities;
 		private ArrayList<ItemStack> items;
 		
-		private boolean isKnown = false;
-		
 		public Location(int locationId) {
 			super();
 			this.locationId = locationId;
@@ -31,15 +29,6 @@ public class Location implements Identifiable{
 			this.items = items;
 		}
 		
-		public Location(String name, String description, ArrayList<Entity> permanentEntities, ArrayList<ItemStack> items, Boolean isKnown) {
-			super();
-			this.name = name;
-			this.description = description;
-			this.permanentEntities = permanentEntities;
-			this.items = items;
-			this.isKnown = isKnown;
-		}
-
 		public String getName() {
 			return name;
 		}
@@ -56,8 +45,9 @@ public class Location implements Identifiable{
 			return description;
 		}
 
-		public void setKnown(boolean isKnown) {
-			this.isKnown = isKnown;
-		}	
+		@Override
+		public String getDetails() {
+			return description;
+		}
 		
 }

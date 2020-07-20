@@ -1,7 +1,6 @@
 package com.ananotherrpg.level;
 
-import com.ananotherrpg.*;
-public abstract class Objective implements Identifiable{
+public abstract class Objective{
 	protected int objectiveId;
 	protected String description;
 	
@@ -16,5 +15,7 @@ public abstract class Objective implements Identifiable{
 		this.location = location;
 	}
 	
+	public abstract String getDescription();
+
 	public abstract boolean isComplete();
 }

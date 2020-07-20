@@ -13,6 +13,8 @@ import com.ananotherrpg.Identifiable;
 
 public class IOManager {
 
+    private static Scanner s = new Scanner(System.in);
+
     public enum ListType {
         BULLET, NUMBERED, ONE_LINE
     };
@@ -21,17 +23,30 @@ public class IOManager {
         NUMBERED, TEXT
     }
 
-    private Scanner s;
+    // Yes == TRUE, No == FALSE
+    public static Boolean askYesOrNoQuestion(String question){ 
+        println(question + " (Y/N)");
 
-    public IOManager() {
-        s = new Scanner(System.in);
+        String input;
+
+        do{
+            println("Enter Y or N");
+            input = s.nextLine();
+        }while(!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N"));
+        
+        if (input.equalsIgnoreCase("Y")) {
+            return true;
+        } 
+        
+        return false;
+
     }
 
-    public List<String> extractIdentifiers(List<? extends Identifiable> list) {
+    public static List<String> extractIdentifiers(List<? extends Identifiable> list) {
         return list.stream().map(Identifiable::getName).collect(Collectors.toList());
     }
 
-    public void listStrings(List<String> data, ListType type) {
+    public static void listStrings(List<String> data, ListType type) {
         if (data.isEmpty()) {
             println("There's nothing to show");
         } else {
@@ -52,11 +67,11 @@ public class IOManager {
         }
     }
 
-    public void listIdentifiers(List<? extends Identifiable> list, ListType type) {
+    public static void listIdentifiers(List<? extends Identifiable> list, ListType type) {
         listStrings(extractIdentifiers(list), type);
     }
 
-    public Optional<String> queryUserInputAgainstStrings(List<String> data, SelectionMethod selectionMethod) {
+    public static Optional<String> queryUserInputAgainstStrings(List<String> data, SelectionMethod selectionMethod) {
         if (data.isEmpty()) {
             return Optional.empty();
         } else {
@@ -99,7 +114,8 @@ public class IOManager {
         }
     }
 
-    public String queryUserInputAgainstStringsWithoutExit(List<String> data, SelectionMethod selectionMethod) {
+    // replace
+    public static String queryUserInputAgainstStringsWithoutExit(List<String> data, SelectionMethod selectionMethod) {
         String validatedInput = "";
         if (selectionMethod == SelectionMethod.NUMBERED) {
             println("Enter choice number: ");
@@ -134,7 +150,7 @@ public class IOManager {
 
     }
 
-    public <T extends Identifiable> Optional<T> queryUserInputAgainstIdentifiers(List<T> data,
+    public static <T extends Identifiable> Optional<T> queryUserInputAgainstIdentifiers(List<T> data,
             SelectionMethod selectionMethod) {
         Map<String, T> options = data.stream().collect(Collectors.toMap(T::getName, Function.identity()));
 
@@ -155,27 +171,48 @@ public class IOManager {
 
     }
 
-    public Optional<String> listAndQueryUserInputAgainstStrings(List<String> data, ListType type,
+    public static <T> Optional<T> queryUserInputAgainstCustomMap(List<T> data, Function<? super T, ? extends String> keyMapper,
+            SelectionMethod selectionMethod) {
+        Map<String, T> options = data.stream().collect(Collectors.toMap(keyMapper, Function.identity()));
+
+        Optional<String> optionalData = queryUserInputAgainstStrings(new ArrayList<String>(options.keySet()),
+                selectionMethod);
+
+        if (optionalData.isPresent()) {
+            try {
+
+                return Optional.of(options.get(optionalData.orElseThrow()));
+            } catch (NoSuchElementException e) {
+                println("Catastrophic error in user query");
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+
+    }
+
+    public static Optional<String> listAndQueryUserInputAgainstStrings(List<String> data, ListType type,
             SelectionMethod method) {
         listStrings(data, type);
         return queryUserInputAgainstStrings(data, method);
     }
 
-    public <T extends Identifiable> Optional<T> listAndQueryUserInputAgainstIdentifiers(List<T> data, ListType type,
+    public static <T extends Identifiable> Optional<T> listAndQueryUserInputAgainstIdentifiers(List<T> data, ListType type,
             SelectionMethod method) {
         listIdentifiers(data, type);
         return queryUserInputAgainstIdentifiers(data, method);
     }
 
-    public void println(String text) {
+    public static void println(String text) {
         System.out.println(text);
     }
 
-    public void print(String text) {
+    public static void print(String text) {
         System.out.print(text);
     }
 
-	public String listAndQueryUserInputAgainstStringsWithoutExit(List<String> options, ListType listType,
+	public static String listAndQueryUserInputAgainstStringsWithoutExit(List<String> options, ListType listType,
 			SelectionMethod selectionMethod) {
         listStrings(options, listType);
 		return queryUserInputAgainstStringsWithoutExit(options, selectionMethod);

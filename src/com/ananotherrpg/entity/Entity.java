@@ -1,22 +1,18 @@
 package com.ananotherrpg.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
+import com.ananotherrpg.entity.dialogue.DialogueManager;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.ItemStack;
-import com.ananotherrpg.util.Link;
-import com.ananotherrpg.util.LinkedDirectedGraph;
+import com.ananotherrpg.util.DirectedDataGraph;
 
 public class Entity implements Identifiable {
 	private int entityId;
 
 	protected String name;
 
-	protected LinkedDirectedGraph<DialogueLine, String> dialogue;
+	protected DirectedDataGraph<DialogueLine, String> dialogue;
 
 	protected int hp;
 	protected int maxHealth;
@@ -34,11 +30,11 @@ public class Entity implements Identifiable {
 		this.maxHealth = maxHealth;
 		this.inventory = inventory;
 		this.isDead = false;
-		this.dialogue = Entity.NO_DIALOGUE;
+		this.dialogue = DialogueManager.NO_DIALOGUE;
 	}
 
 	public Entity(String name, int hp, int maxHealth, Inventory inventory, Boolean isDead, Boolean isKnown,
-	LinkedDirectedGraph<DialogueLine, String> dialogue) {
+	DirectedDataGraph<DialogueLine, String> dialogue) {
 		this.name = name;
 		this.hp = hp;
 		this.maxHealth = maxHealth;
@@ -67,19 +63,11 @@ public class Entity implements Identifiable {
 		return inventory;
 	}
 
-	public LinkedDirectedGraph<DialogueLine, String> getDialogueGraph(){
+	public DirectedDataGraph<DialogueLine, String> getDialogueGraph(){
 		return dialogue;
 	}
 
-	public static final LinkedDirectedGraph<DialogueLine,String> NO_DIALOGUE;
-    static{
-        DialogueLine noDialogueLine = new DialogueLine("They don't seem interested in talking");
-
-        HashMap<DialogueLine, List<Link<DialogueLine,String>>> noDialogueMap = new HashMap<DialogueLine, List<Link<DialogueLine,String>>>();
-        noDialogueMap.putIfAbsent(noDialogueLine, new ArrayList<Link<DialogueLine, String>>());
-
-        NO_DIALOGUE = new LinkedDirectedGraph<DialogueLine,String>(noDialogueMap, noDialogueLine);
-    }
+	
 
 	@Override
 	public String getDetails() {

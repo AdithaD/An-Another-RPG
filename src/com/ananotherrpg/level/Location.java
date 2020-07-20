@@ -6,48 +6,68 @@ import java.util.List;
 import com.ananotherrpg.Identifiable;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.inventory.ItemStack;
+import com.ananotherrpg.io.IOManager;
+import com.ananotherrpg.io.IOManager.ListType;
 
-public class Location implements Identifiable{
-		private int locationId;
-		
-		private String name;
-		private String description;
-		
-		private ArrayList<Entity> permanentEntities;
-		private ArrayList<ItemStack> items;
-		
-		public Location(int locationId) {
-			super();
-			this.locationId = locationId;
+public class Location implements Identifiable {
+	private int locationId;
+
+	private String name;
+	private String description;
+
+	private ArrayList<Entity> permanentEntities;
+	private ArrayList<ItemStack> itemStacks;
+
+	public Location(int locationId) {
+		super();
+		this.locationId = locationId;
+	}
+
+	public Location(String name, String description, ArrayList<Entity> permanentEntities,
+			ArrayList<ItemStack> itemStacks) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.permanentEntities = permanentEntities;
+		this.itemStacks = itemStacks;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<Entity> getPermanentEntities() {
+		return permanentEntities;
+	}
+
+	public ArrayList<ItemStack> getItemStacks() {
+		return itemStacks;
+	}
+
+	public void printLocationDetails() {
+		IOManager.println(description);
+		IOManager.println("You do a quick whirl and you see:");
+
+		if (permanentEntities.isEmpty()) {
+			IOManager.println("There is noone in this area");
+		} else {
+			IOManager.listIdentifiers(permanentEntities, ListType.BULLET);
 		}
 
-		public Location(String name, String description, ArrayList<Entity> permanentEntities, ArrayList<ItemStack> items) {
-			super();
-			this.name = name;
-			this.description = description;
-			this.permanentEntities = permanentEntities;
-			this.items = items;
+		if (itemStacks.isEmpty()) {
+			IOManager.println("There is no items in this area");
+		} else {
+			IOManager.listIdentifiers(itemStacks, ListType.BULLET);
 		}
-		
-		public String getName() {
-			return name;
-		}
+	}
 
-		public List<Entity> getPermanentEntities() {
-			return permanentEntities;
-		}
+	public String getDescription() {
+		return description;
+	}
 
-		public ArrayList<ItemStack> getItemStacks() {
-			return items;
-		}
+	@Override
+	public String getDetails() {
+		return description;
+	}
 
-		public String getDescription() {
-			return description;
-		}
-
-		@Override
-		public String getDetails() {
-			return description;
-		}
-		
 }

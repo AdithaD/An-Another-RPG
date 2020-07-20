@@ -1,21 +1,49 @@
 package com.ananotherrpg.util;
 
-public class Link<T, S> {
-    private T incident;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 
-    private S response;
+public class Link<T>{
+    private List<T> nodes;
 
-    public Link(T incident, S response) {
-        this.incident = incident;
-        this.response = response;
+    private boolean isActive;
+
+    public Link(T node1, T node2, boolean isActive) {
+        nodes = new ArrayList<T>();
+        nodes.add(node1);
+        nodes.add(node2);
+
+        this.isActive = isActive;
     }
 
-
-    public T getIncident(){
-        return incident;
+    public boolean isEquivalent(Link<T> otherLink) {
+       return nodes.equals(otherLink.nodes);
     }
 
-    public S getResponse(){
-        return response;
+    public boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean newState){
+        this.isActive = newState;
+    }
+
+    public T getOther(T node){
+        if(node == nodes.get(1)){
+            return nodes.get(2);
+        }else if(node == nodes.get(2)){
+            return nodes.get(1);
+        }else{
+            throw new InvalidParameterException();
+        }
+    }
+
+    public List<T> getNodes(){
+        return nodes;
+    }
+
+    public boolean isActive(){
+        return isActive;
     }
 }

@@ -8,6 +8,7 @@ import com.ananotherrpg.entity.Combatant;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.Player;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
+import com.ananotherrpg.entity.dialogue.DialogueManager;
 import com.ananotherrpg.entity.dialogue.QuestDialogueLine;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
@@ -19,11 +20,12 @@ import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.Campaign;
 import com.ananotherrpg.level.KillObjective;
 import com.ananotherrpg.level.Location;
+import com.ananotherrpg.level.LocationManager;
 import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.Quest;
+import com.ananotherrpg.util.DirectedDataGraph;
+import com.ananotherrpg.util.DirectedDataLink;
 import com.ananotherrpg.util.Graph;
-import com.ananotherrpg.util.Link;
-import com.ananotherrpg.util.LinkedDirectedGraph;
 
 public class Game {
 
@@ -54,14 +56,14 @@ public class Game {
 				"Wow! There's a room over there with a scary old man! Clear him out for me. One way or the other...", 1);
 		DialogueLine managerDialogueLine3 = new DialogueLine("Well, that's certainly a disappointment");
 
-		Link<DialogueLine, String> managerDialogueLink12 = new Link<DialogueLine, String>(managerDialogueLine2,
+		DirectedDataLink<DialogueLine, String> managerDialogueLink12 = new DirectedDataLink<DialogueLine, String>(managerDialogueLine2,
 				"I'm much more than that. I'm the best in the business!");
-		Link<DialogueLine, String> managerDialogueLink122 = new Link<DialogueLine, String>(managerDialogueLine2,
+		DirectedDataLink<DialogueLine, String> managerDialogueLink122 = new DirectedDataLink<DialogueLine, String>(managerDialogueLine2,
 				"Yes.");
-		Link<DialogueLine, String> managerDialogueLink13 = new Link<DialogueLine, String>(managerDialogueLine3,
+		DirectedDataLink<DialogueLine, String> managerDialogueLink13 = new DirectedDataLink<DialogueLine, String>(managerDialogueLine3,
 				"No, I think you've mistaken me for someone.");
 
-		LinkedDirectedGraph<DialogueLine, String> managerDialogueGraph = new LinkedDirectedGraph<DialogueLine, String>(
+		DirectedDataGraph<DialogueLine, String> managerDialogueGraph = new DirectedDataGraph<DialogueLine, String>(
 				managerDialogueLine1);
 		managerDialogueGraph.addNode(managerDialogueLine1);
 		managerDialogueGraph.addNode(managerDialogueLine2);
@@ -104,7 +106,7 @@ public class Game {
 		locations.addNode(lobby);
 		locations.addNode(room1);
 
-		locations.addEdge(lobby, room1);
+		locations.addLink(lobby, room1, false);
 
 		// 5. Quests
 		ArrayList<Combatant> killTargets = new ArrayList<Combatant>();
@@ -123,7 +125,7 @@ public class Game {
 		Campaign testCampaign = new Campaign(campaignID,
 				"A beautiful hotel lobby with an inconspicuous room to the side appears before you", campaignQuests,
 				locations, lobby, new ArrayList<Quest>(),
-				new Player("Mark", 20, 20, new Inventory(), 5, 1), false);
+				new Player("Mark", 20, 20, new Inventory(), 5, 1, new LocationManager(), new DialogueManager(campaignQuests)), false);
 
 		campaign = testCampaign;
 	}

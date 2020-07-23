@@ -10,8 +10,4 @@ public class DialogueLine {
     public String getDialogue(){
         return dialogue;
     }
-
-    public void visit(DialogueManager manager){
-        manager.accept(this);
-    }
 }

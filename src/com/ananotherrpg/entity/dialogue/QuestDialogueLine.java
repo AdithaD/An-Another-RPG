@@ -1,5 +1,7 @@
 package com.ananotherrpg.entity.dialogue;
 
+import com.ananotherrpg.entity.Player;
+
 public class QuestDialogueLine extends DialogueLine {
 
 	private int questID;
@@ -9,12 +11,8 @@ public class QuestDialogueLine extends DialogueLine {
 		this.questID = questID;
 	}
 
-	public int getQuest() {
+	public int getQuestID() {
 		return questID;
 	}
 	
-	@Override
-	public void visit(DialogueManager manager){
-		manager.accept(this);
-	}
 }

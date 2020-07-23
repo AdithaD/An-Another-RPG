@@ -9,7 +9,8 @@ import java.util.Scanner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.ananotherrpg.Identifiable;
+import com.ananotherrpg.IIdentifiable;
+import com.ananotherrpg.entity.dialogue.DialogueLine;
 
 public class IOManager {
 
@@ -42,8 +43,8 @@ public class IOManager {
 
     }
 
-    public static List<String> extractIdentifiers(List<? extends Identifiable> list) {
-        return list.stream().map(Identifiable::getName).collect(Collectors.toList());
+    public static List<String> extractIdentifiers(List<? extends IIdentifiable> list) {
+        return list.stream().map(IIdentifiable::getName).collect(Collectors.toList());
     }
 
     public static void listStrings(List<String> data, ListType type) {
@@ -67,7 +68,7 @@ public class IOManager {
         }
     }
 
-    public static void listIdentifiers(List<? extends Identifiable> list, ListType type) {
+    public static void listIdentifiers(List<? extends IIdentifiable> list, ListType type) {
         listStrings(extractIdentifiers(list), type);
     }
 
@@ -150,7 +151,7 @@ public class IOManager {
 
     }
 
-    public static <T extends Identifiable> Optional<T> queryUserInputAgainstIdentifiers(List<T> data,
+    public static <T extends IIdentifiable> Optional<T> queryUserInputAgainstIdentifiers(List<T> data,
             SelectionMethod selectionMethod) {
         Map<String, T> options = data.stream().collect(Collectors.toMap(T::getName, Function.identity()));
 
@@ -198,7 +199,7 @@ public class IOManager {
         return queryUserInputAgainstStrings(data, method);
     }
 
-    public static <T extends Identifiable> Optional<T> listAndQueryUserInputAgainstIdentifiers(List<T> data, ListType type,
+    public static <T extends IIdentifiable> Optional<T> listAndQueryUserInputAgainstIdentifiers(List<T> data, ListType type,
             SelectionMethod method) {
         listIdentifiers(data, type);
         return queryUserInputAgainstIdentifiers(data, method);
@@ -216,5 +217,8 @@ public class IOManager {
 			SelectionMethod selectionMethod) {
         listStrings(options, listType);
 		return queryUserInputAgainstStringsWithoutExit(options, selectionMethod);
+	}
+
+	public static void println(DialogueLine currentLine) {
 	}
 }

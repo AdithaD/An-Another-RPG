@@ -1,17 +1,17 @@
 package com.ananotherrpg.inventory;
 
-import com.ananotherrpg.entity.Player;
+import com.ananotherrpg.entity.Entity;
+import com.ananotherrpg.io.IOManager;
 
 public class Item {
-	protected int itemId;
-	
+	private int itemID;
+
 	protected String name;
+	protected String description;
+
 	protected int weight;
 	protected int sellPrice;
 	
-	public Item(String name) {
-		this.name = name;
-	}
 	public int getWeight() {
 		return weight;
 	}
@@ -21,8 +21,12 @@ public class Item {
 	public String getName() {
 		return name;
 	}
-	
-	public void use(Player player){
-		player.accept(this);
+
+	public void use(Entity player){
+		IOManager.println("Doesn't really do much does it?");
+	}
+
+	public int getID(){
+		return itemID;
 	}
 }

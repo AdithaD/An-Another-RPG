@@ -1,46 +1,21 @@
 package com.ananotherrpg.level;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-public class Quest{
-	private int questId;
+import com.ananotherrpg.IIdentifiable;
 
-	private String questName;
-	private Map<Integer, Objective> objectiveIdMap;
+public class Quest implements IIdentifiable{
 
-	public Quest(int questId, String questName, List<Objective> objectives, boolean isComplete) {
-		super();
-		this.questId = questId;
-		this.objectiveIdMap = objectives.stream().collect(Collectors.toMap(Objective::getId, Function.identity()));
-		this.questName = questName;
-	}
+	private String name;
+	private String description;
 
-	public Quest(int questId, List<Objective> objectives, boolean isComplete, boolean isActive) {
-		super();
-		this.questId = questId;
-		this.objectiveIdMap = objectives.stream().collect(Collectors.toMap(Objective::getId, Function.identity()));
+	private List<? extends IObjective> objectives;
+	private boolean isActive; 
 
-	}
-
-	public int getId() {
-		return questId;
-	}
-
-	public String getName() {
-		return questName;
-	}
-
-	public List<Objective> getObjectives() {
-		return new ArrayList<Objective>(objectiveIdMap.values());
-	}
 
 	public boolean isComplete(){
 		boolean isComplete = true;
-		for (Objective obj : objectiveIdMap.values()) {
+		for (IObjective obj : objectives) {
 			if(!obj.isComplete()){
 				isComplete = false;
 				break;
@@ -49,5 +24,36 @@ public class Quest{
 
 		return isComplete;
 
+	}
+	
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	@Override
+	public String getListForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getDetailForm() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

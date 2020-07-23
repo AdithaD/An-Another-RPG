@@ -3,71 +3,56 @@ package com.ananotherrpg.level;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ananotherrpg.Identifiable;
+import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.inventory.ItemStack;
-import com.ananotherrpg.io.IOManager;
-import com.ananotherrpg.io.IOManager.ListType;
+import com.ananotherrpg.inventory.Inventory;
 
-public class Location implements Identifiable {
-	private int locationId;
+public class Location implements IIdentifiable {
 
 	private String name;
 	private String description;
 
-	private ArrayList<Entity> permanentEntities;
-	private ArrayList<ItemStack> itemStacks;
+	private ArrayList<Entity> entities;
 
-	public Location(int locationId) {
-		super();
-		this.locationId = locationId;
-	}
+	private Inventory itemsOnGround;
 
-	public Location(String name, String description, ArrayList<Entity> permanentEntities,
-			ArrayList<ItemStack> itemStacks) {
+	public Location(String name, String description, ArrayList<Entity> entities,
+			Inventory itemsOnGround) {
 		super();
 		this.name = name;
 		this.description = description;
-		this.permanentEntities = permanentEntities;
-		this.itemStacks = itemStacks;
+		this.entities = entities;
+		this.itemsOnGround = itemsOnGround;
 	}
-
+	
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	public List<Entity> getPermanentEntities() {
-		return permanentEntities;
+		return entities;
 	}
 
-	public ArrayList<ItemStack> getItemStacks() {
-		return itemStacks;
+	public Inventory getItemStacks() {
+		return itemsOnGround;
 	}
 
-	public void printLocationDetails() {
-		IOManager.println(description);
-		IOManager.println("You do a quick whirl and you see:");
-
-		if (permanentEntities.isEmpty()) {
-			IOManager.println("There is noone in this area");
-		} else {
-			IOManager.listIdentifiers(permanentEntities, ListType.BULLET);
-		}
-
-		if (itemStacks.isEmpty()) {
-			IOManager.println("There is no items in this area");
-		} else {
-			IOManager.listIdentifiers(itemStacks, ListType.BULLET);
-		}
-	}
-
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
 	@Override
-	public String getDetails() {
-		return description;
+	public String getListForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getDetailForm() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

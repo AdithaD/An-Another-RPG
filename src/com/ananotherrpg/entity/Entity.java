@@ -1,76 +1,73 @@
 package com.ananotherrpg.entity;
 
-import com.ananotherrpg.Identifiable;
-import com.ananotherrpg.entity.dialogue.DialogueLine;
-import com.ananotherrpg.entity.dialogue.DialogueManager;
+import com.ananotherrpg.IIdentifiable;
+import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.inventory.Inventory;
-import com.ananotherrpg.inventory.ItemStack;
-import com.ananotherrpg.util.DirectedDataGraph;
+import com.ananotherrpg.inventory.Weapon;
 
-public class Entity implements Identifiable {
-	private int entityId;
+/**
+ * The Entity class represents "living beings" in the game
+ */
+public class Entity implements IIdentifiable {
 
-	protected String name;
+	private String name;
+	private String description;
 
-	protected DirectedDataGraph<DialogueLine, String> dialogue;
+	private int hp;
+	private Attributes attributes;
+	private int level;
+	private boolean isDead;
 
-	protected int hp;
-	protected int maxHealth;
-	public Inventory inventory;
+	private Inventory inventory;
+	private Weapon equippedWeapon;
 
-	protected Boolean isDead;
+	private Dialogue dialogue;
 
-	public Entity(int entityId) {
-		this.entityId = entityId;
-	}
-
-	public Entity(String name, int hp, int maxHealth, Inventory inventory) {
-		this.name = name;
-		this.hp = hp;
-		this.maxHealth = maxHealth;
-		this.inventory = inventory;
-		this.isDead = false;
-		this.dialogue = DialogueManager.NO_DIALOGUE;
-	}
-
-	public Entity(String name, int hp, int maxHealth, Inventory inventory, Boolean isDead, Boolean isKnown,
-	DirectedDataGraph<DialogueLine, String> dialogue) {
-		this.name = name;
-		this.hp = hp;
-		this.maxHealth = maxHealth;
-		this.inventory = inventory;
-		this.isDead = isDead;;
-		this.dialogue = dialogue;
-	}
-
-	public Boolean IsDead() {
-		return isDead;
-	}
-
-	public void setIsDead(Boolean isDead) {
-		this.isDead = isDead;
-	}
-
+	@Override
 	public String getName() {
+
 		return name;
 	}
 
-	public void addItemStackToInventory(ItemStack itemStack){
-		inventory.addToInventory(itemStack);
+	@Override
+	public String getDescription() {
+		
+		return description;
+	}
+
+	public boolean isDead() {
+		return isDead;
+	}
+	
+	public Dialogue getDialogue(){
+		return dialogue;
+	}
+
+	public void equipWeapon(Weapon weapon){
+		equippedWeapon = weapon;
+	}
+
+	public void applyModifiers(AttributeModifier attributeModifier) {
+		attributes.addModifier(attributeModifier);
+	}
+
+	@Override
+	public String getListForm() {
+		return name;
+	}
+
+	@Override
+	public String getDetailForm() {
+		String detailForm  = name + ": \n" + description;
+
+		return detailForm;
+	}
+
+	public Attributes getAttributes(){
+		return attributes;
 	}
 
 	public Inventory getInventory(){
 		return inventory;
-	}
-
-	public DirectedDataGraph<DialogueLine, String> getDialogueGraph(){
-		return dialogue;
-	}
-
-	
-
-	@Override
-	public String getDetails() {
-		return name;
 	}
 }

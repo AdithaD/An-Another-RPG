@@ -9,6 +9,8 @@ import com.ananotherrpg.inventory.Inventory;
 
 public class Location implements IIdentifiable {
 
+	private final int locationID;
+
 	private String name;
 	private String description;
 
@@ -16,9 +18,10 @@ public class Location implements IIdentifiable {
 
 	private Inventory itemsOnGround;
 
-	public Location(String name, String description, ArrayList<Entity> entities,
+	public Location(int locationID, String name, String description, ArrayList<Entity> entities,
 			Inventory itemsOnGround) {
 		super();
+		this.locationID = locationID;
 		this.name = name;
 		this.description = description;
 		this.entities = entities;
@@ -53,6 +56,11 @@ public class Location implements IIdentifiable {
 	public String getDetailForm() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getID() {
+		return locationID;
 	}
 
 }

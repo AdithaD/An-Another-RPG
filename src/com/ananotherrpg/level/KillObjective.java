@@ -1,28 +1,18 @@
 package com.ananotherrpg.level;
 
-import java.util.List;
+import com.ananotherrpg.event.EventData;
 
-import com.ananotherrpg.entity.Entity;
+public class KillObjective extends Objective {
 
-public class KillObjective implements IObjective {
+	private int quantity;
+	private int amountKilled;
 
-	private String name;
+	public KillObjective(String name, int targetID, int quantity) {
+		this.name = name;
+		this.targetID = targetID;
+		this.quantity = quantity;
 
-	private List<Entity> targets;
-
-	@Override
-	public boolean isComplete() {
-		if (targets.stream().allMatch(e  -> e.isDead())) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-
-	@Override
-	public String getDescription() {
-		//TODO Implement KillObjective description
-		return "";
+		amountKilled = 0;
 	}
 
 	@Override
@@ -32,14 +22,20 @@ public class KillObjective implements IObjective {
 
 	@Override
 	public String getListForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Kill Objective: " + name;
 	}
 
 	@Override
-	public String getDetailForm() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean isComplete() {
+		return amountKilled >= quantity;
+	}
+
+	@Override
+	public void update(EventData data) {
+		if(data.getID() == targetID){
+			amountKilled += 1;
+		}
+
 	}
 
 }

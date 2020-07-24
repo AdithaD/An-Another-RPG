@@ -6,16 +6,23 @@ import com.ananotherrpg.entity.Entity;
 
 public class Weapon extends Item {
 
+	public Weapon(int itemID, String name, String description, int weight, int sellPrice, int damage, double critChance, double critDamageMultiplier) {
+		super(itemID, name, description, weight, sellPrice);
+		this.damage = damage;
+		this.critChance = critChance;
+		this.critDamgeMultiplier = critDamageMultiplier;
+	}
+
 	private int damage;
 
-	private double criticalHitChance;
-	private double criticalHitMultiplier;
+	private double critChance;
+	private double critDamgeMultiplier;
 	
 	public int calculateDamage(){
 		Random r = new Random();
 		int damage = this.damage;
-		if(r.nextDouble() >= criticalHitChance){
-			damage = (int) Math.round(damage * (1 + criticalHitMultiplier));
+		if(r.nextDouble() >= critChance){
+			damage = (int) Math.round(damage * (1 + critDamgeMultiplier));
 		}
 		return damage;
 	}
@@ -23,8 +30,8 @@ public class Weapon extends Item {
 	public int calculateDamage(int critChanceBonus, int critMultiplierBonus) {
 		Random r = new Random();
 		int damage = this.damage;
-		if(r.nextDouble() >= criticalHitChance + critChanceBonus){
-			damage = (int) Math.round(damage * (1 + criticalHitMultiplier + critMultiplierBonus));
+		if(r.nextDouble() >= critChance + critChanceBonus){
+			damage = (int) Math.round(damage * (1 + critDamgeMultiplier + critMultiplierBonus));
 		}
 		return damage;
 	}
@@ -34,5 +41,5 @@ public class Weapon extends Item {
 		player.equipWeapon(this);
 	}
 
-	//public static final Weapon UNARMED = new Weapon("Fists", 2, 0.3, 5);
+	public static final Weapon FISTS = new Weapon(0100, "Fists", "A man's right hand (and left)", 0, 0, 1, 0.5, 3);
 }

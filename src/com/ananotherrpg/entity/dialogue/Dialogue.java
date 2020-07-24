@@ -17,7 +17,12 @@ public class Dialogue {
     private List<Integer> newfoundLocations;
     private List<Integer> newfoundQuests;
 
-    public void start(Player player){
+    public Dialogue(DirectedDataGraph<DialogueLine, Response> dialogueGraph, DialogueLine startingLine) {
+        this.dialogueGraph = dialogueGraph;
+        this.startingLine = startingLine;
+    }
+
+	public void start(Player player){
         currentLine = startingLine;
         
         newfoundLocations = new ArrayList<Integer>();
@@ -63,5 +68,12 @@ public class Dialogue {
     public List<Integer> getNewfoundQuests() {
         return newfoundQuests;
     }
-    
+
+    public static Dialogue NO_DIALOGUE;
+    static{
+        final DialogueLine noDialogueLine1 = new DialogueLine("They don't seem to be in a talking mood");
+		DirectedDataGraph<DialogueLine, Response> noDialogueGraph = new DirectedDataGraph<DialogueLine, Response>();
+        noDialogueGraph.addNode(noDialogueLine1);
+        NO_DIALOGUE = new Dialogue(noDialogueGraph, noDialogueLine1);
+    }
 }

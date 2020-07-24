@@ -1,12 +1,15 @@
 package com.ananotherrpg;
 
-public interface IIdentifiable {
+/**
+ *  Any object that can be identified by a player
+ */
+public interface IIdentifiable extends IQueryable{
 	
-	public String getName();
+	public int getID();
 	
 	public String getDescription();
 
-	public String getListForm();
-
 	public String getDetailForm();
+
+	
 }

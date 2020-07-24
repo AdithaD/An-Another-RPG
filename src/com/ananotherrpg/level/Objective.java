@@ -1,30 +1,30 @@
 package com.ananotherrpg.level;
 
-public abstract class Objective{
-	protected int objectiveId;
-	protected String description;
-	
-	protected Location location;
-	
-	protected Boolean isActive = false;
-	protected Boolean isComplete = false;
-	
-	public Objective(int objectiveId, String description, Location location) {
-		super();
-		this.objectiveId = objectiveId;
-		this.description = description;
-		this.location = location;
-	}
-	
-	public int getId(){
-		return objectiveId;
+import com.ananotherrpg.IQueryable;
+import com.ananotherrpg.event.EventData;
+import com.ananotherrpg.event.EventDispatcher.GameEvent;
+import com.ananotherrpg.event.IEventObserver;
+/**
+ * Any class that can act as an objective for a quest
+ */
+public abstract class Objective implements IQueryable, IEventObserver{
+
+    protected String name;
+	protected int targetID;
+
+    protected GameEvent gameEvent;
+
+    public abstract boolean isComplete();
+
+    public abstract String getName();
+
+    public abstract String getListForm();
+
+    public abstract void update(EventData data);
+
+    @Override
+	public GameEvent getAssociatedEvent() {
+		return gameEvent;
 	}
 
-	public String getDescription(){
-		return description;
-	}
-
-	public boolean isComplete(){
-		return isComplete;
-	}
 }

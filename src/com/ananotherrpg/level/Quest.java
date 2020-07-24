@@ -6,26 +6,40 @@ import com.ananotherrpg.IIdentifiable;
 
 public class Quest implements IIdentifiable{
 
+	private final int questID;
+
 	private String name;
 	private String description;
 
-	private List<? extends IObjective> objectives;
+	private List<? extends Objective> objectives;
 	private boolean isActive; 
 
 
-	public boolean isComplete(){
+	public Quest(int questID, String name, String description, List<Objective> objectives) {
+		this.questID = questID;
+		this.name = name;
+		this.description = description;
+		this.objectives = objectives;
+	}
+
+	public boolean isComplete(CampaignState state){
 		boolean isComplete = true;
-		for (IObjective obj : objectives) {
+		for (Objective obj : objectives) {
 			if(!obj.isComplete()){
 				isComplete = false;
 				break;
 			}
 		}
-
 		return isComplete;
-
 	}
-	
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 
 	@Override
 	public String getName() {
@@ -35,14 +49,6 @@ public class Quest implements IIdentifiable{
 	@Override
 	public String getDescription() {
 		return description;
-	}
-
-	public boolean isActive() {
-		return isActive;
-	}
-
-	public void setActive(boolean isActive) {
-		this.isActive = isActive;
 	}
 
 	@Override
@@ -55,5 +61,10 @@ public class Quest implements IIdentifiable{
 	public String getDetailForm() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getID() {
+		return questID;
 	}
 }

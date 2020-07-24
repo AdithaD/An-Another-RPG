@@ -10,18 +10,58 @@ import com.ananotherrpg.inventory.Weapon;
  */
 public class Entity implements IIdentifiable {
 
+	private final int entityID;
+
 	private String name;
 	private String description;
 
 	private int hp;
 	private Attributes attributes;
+	
 	private int level;
+	private int xp;
 	private boolean isDead;
 
 	private Inventory inventory;
-	private Weapon equippedWeapon;
+	
 
 	private Dialogue dialogue;
+
+	public Entity(int entityID, String name, String description, Attributes attributes, int level, 
+			Inventory inventory, Dialogue dialogue, boolean isDead) {
+		this.entityID = entityID;
+		this.name = name;
+		this.description = description;
+
+		this.attributes = attributes;
+		this.level = level;
+		this.hp = attributes.calculateMaxHp();
+		this.xp = 0;
+
+		this.inventory = inventory;
+
+		this.dialogue = dialogue;
+
+		this.isDead = isDead;
+	}
+
+	public Entity(int entityID, String name, String description, Attributes attributes, int hp, int level, int xp,
+			Inventory inventory, Dialogue dialogue, boolean isDead) {
+		this.entityID = entityID;
+		this.name = name;
+		this.description = description;
+
+		this.attributes = attributes;
+		this.hp = hp;
+		this.level = level;
+		this.xp = xp;
+
+		this.inventory = inventory;
+
+		this.dialogue = dialogue;
+
+		this.isDead = isDead;
+	}
 
 	@Override
 	public String getName() {
@@ -44,7 +84,8 @@ public class Entity implements IIdentifiable {
 	}
 
 	public void equipWeapon(Weapon weapon){
-		equippedWeapon = weapon;
+		//update item effects
+		inventory.equipWeapon(weapon);
 	}
 
 	public void applyModifiers(AttributeModifier attributeModifier) {
@@ -70,4 +111,11 @@ public class Entity implements IIdentifiable {
 	public Inventory getInventory(){
 		return inventory;
 	}
+
+	@Override
+	public int getID() {
+		return entityID;
+	}
+
+	
 }

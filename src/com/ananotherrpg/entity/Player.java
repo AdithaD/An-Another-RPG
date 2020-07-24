@@ -9,6 +9,8 @@ import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.Campaign;
+import com.ananotherrpg.level.Location;
+import com.ananotherrpg.level.Quest;
 /**
  * The Player class is responsible for the main game loop, and user interaction with the game
  */
@@ -21,10 +23,9 @@ public class Player {
 	private boolean shouldExitCampaign = false;
 
 	private Entity playerEntity;
-	private int xp;
+	private List<Quest> acceptedQuests;	
 
-	private List<Integer> knownLocations;
-	private List<Integer> activeQuests;
+	private Location currentLocation;
 
 	public void talk() {
 		// if (locationManager.getPermanentEntitiesInCurrentLocation().isEmpty()) {
@@ -185,6 +186,15 @@ public class Player {
 
 	public Entity getEntity() {
 		return playerEntity;
+	}
+
+	public Player(Entity playerEntity, List<Integer> knownLocations, List<Integer> activeQuests) {
+		this.playerEntity = playerEntity;
+	}
+
+	public Player(Entity playerEntity, Location location) {
+		this.playerEntity = playerEntity;
+		this.currentLocation = location;
 	}
 
 }

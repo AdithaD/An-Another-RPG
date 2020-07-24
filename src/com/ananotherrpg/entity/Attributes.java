@@ -31,6 +31,15 @@ public class Attributes {
 
     private List<AttributeModifier> modifiers;
 
+
+    public Attributes(int strength, int agility, int constitution, int charisma){
+        this.strength = strength;
+        this.agility = agility;
+        this.constitution = constitution;
+        this.charisma = charisma;
+    }
+
+
     /**
      * Calculates the damage scaling for attacks based on strength
      * 

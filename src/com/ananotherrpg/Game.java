@@ -13,6 +13,7 @@ import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.entity.dialogue.QuestDialogueLine;
 import com.ananotherrpg.entity.dialogue.Response;
+import com.ananotherrpg.event.EventDispatcher.GameEvent;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.Weapon;
@@ -21,10 +22,10 @@ import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.Campaign;
 import com.ananotherrpg.level.EntityTemplate;
-import com.ananotherrpg.level.KillObjective;
 import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.QuestTemplate;
+import com.ananotherrpg.level.TallyObjective;
 import com.ananotherrpg.util.DirectedDataGraph;
 import com.ananotherrpg.util.Graph;
 
@@ -158,7 +159,7 @@ public class Game {
 
 		// 5. Quests
 
-		Objective killAngryManObjective = new KillObjective("Kill the Angry Man", angryman.getID(), 1);
+		Objective killAngryManObjective = new TallyObjective("Kill the Angry Man", angryman.getID(), GameEvent.KILL, 1);
 		List<Objective> objectives = new ArrayList<Objective>();
 		objectives.add(killAngryManObjective);
 

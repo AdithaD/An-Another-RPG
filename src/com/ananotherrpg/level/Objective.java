@@ -16,15 +16,23 @@ public abstract class Objective implements IQueryable, IEventObserver{
 
     public abstract boolean isComplete();
 
-    public abstract String getName();
+    public abstract void update(EventData data);
 
     public abstract String getListForm();
 
-    public abstract void update(EventData data);
+    public String getName(){
+        return name;
+    }
 
     @Override
 	public GameEvent getAssociatedEvent() {
 		return gameEvent;
-	}
+    }
+    
+    public Objective(String name, int targetID, GameEvent gameEvent){
+        this.name = name;
+        this.targetID = targetID;
+        this.gameEvent = gameEvent;
+    }
 
 }

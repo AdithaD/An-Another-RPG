@@ -46,6 +46,10 @@ public class PlayerAvatar {
 		for (QuestTemplate template : traverser.getQuestTemplates()) {
 			questLog.addQuest(template.instantiateTemplate());
 		}
+
+		for (Integer pathId : traverser.getNewPathIDs()){
+			if(!knownPaths.contains(pathId)) knownPaths.add(pathId);
+		}
 	}
 
 	public void pickUp(ItemStack itemStack) {

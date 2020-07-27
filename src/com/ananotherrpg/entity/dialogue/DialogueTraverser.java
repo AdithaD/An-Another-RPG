@@ -24,6 +24,7 @@ public class DialogueTraverser {
     private List<DialogueLine> traversedLines;
 
     private List<QuestTemplate> questTemplates;
+    private List<Integer> newPathIDs;
 
     public DialogueTraverser(Dialogue dialogue, DialogueLine startingLine, Entity source, Entity traverser){
         this.dialogue = dialogue;
@@ -36,6 +37,7 @@ public class DialogueTraverser {
         traversedLines.add(currentLine);
 
         questTemplates = new ArrayList<QuestTemplate>();
+        newPathIDs = new ArrayList<Integer>();
     }
 
     public void start(){
@@ -82,5 +84,13 @@ public class DialogueTraverser {
      */
 	public void recordQuest(QuestTemplate questTemplate) {
         questTemplates.add(questTemplate);
+    }
+    
+    public void recordPath(int pathID){
+        newPathIDs.add(pathID);
+    }
+
+	public List<Integer> getNewPathIDs() {
+		return newPathIDs;
 	}
 }

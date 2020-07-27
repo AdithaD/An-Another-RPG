@@ -13,6 +13,7 @@ import com.ananotherrpg.entity.PlayerAvatar;
 import com.ananotherrpg.entity.QuestLog;
 import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
+import com.ananotherrpg.entity.dialogue.PathDialogueLine;
 import com.ananotherrpg.entity.dialogue.QuestDialogueLine;
 import com.ananotherrpg.entity.dialogue.Response;
 import com.ananotherrpg.event.EventDispatcher.GameEvent;
@@ -34,7 +35,8 @@ import com.ananotherrpg.level.TallyObjective;
 import com.ananotherrpg.util.DirectedGraph;
 
 /**
- * The Game class is reponsible for loading or creating new Campaigns, and providing them to Player object to play.
+ * The Game class is reponsible for loading or creating new Campaigns, and
+ * providing them to Player object to play.
  */
 public class Game {
 
@@ -48,6 +50,7 @@ public class Game {
 	private GameState gameState = GameState.MENU;
 
 	private static Boolean shouldExit = false;
+
 	public static void main(String[] args) {
 
 		while (!shouldExit) {
@@ -60,12 +63,11 @@ public class Game {
 					SelectionMethod.NUMBERED, false);
 
 			String input;
-			if(opInput.isPresent()){
+			if (opInput.isPresent()) {
 				input = opInput.get();
-			}else{
+			} else {
 				throw new IllegalStateException("User didn't choose an option!");
-			}		
-			 
+			}
 
 			Game game;
 			if (input == options.get(0)) {
@@ -89,13 +91,13 @@ public class Game {
 		currentCampaign.play();
 	}
 
-	public static Game testGame(){
-		
+	public static Game testGame() {
+
 		// Object construction order should be: 1. (ItemStack, DialogueGraph) 2.
 		// (Inventory) 3. (Entity) 4. (Location) 5.(Quest, LocationGraph) 6.(Campaign)
 
 		// 1. Items / ItemStacks
-		Item key = new Item(0000,"Key", "A rusty old key", 1, 10, false);
+		Item key = new Item(0000, "Key", "A rusty old key", 1, 10, false);
 		Item reward = new Item(0001, "Reward", "This is all you could ever ask for!", 5, 1000, false);
 		Weapon mjollnir = new Weapon(0101, "Mjollnir", "The hammer of legend", 20, 150, 3, 0.2, 2);
 		Weapon rabidClaws = new Weapon(0102, "Rabid Claws", "Biological warfare.", 0, 0, 4, 0.5, 1.5);
@@ -105,41 +107,60 @@ public class Game {
 		List<Objective> objectives = new ArrayList<Objective>();
 		objectives.add(killAngryManObjective);
 
-		QuestTemplate killAngryBby = new QuestTemplate(3000, "Save the hotel", "A quest of upmost importance", objectives);
+		QuestTemplate killAngryBby = new QuestTemplate(3000, "Save the hotel", "A quest of upmost importance",
+				objectives);
 		List<QuestTemplate> campaignQuests = new ArrayList<QuestTemplate>();
 		campaignQuests.add(killAngryBby);
 
 		// 1 .Dialogue
 		DialogueLine managerDialogueLine1 = new DialogueLine("Hello! Are you the adventurer I asked for?");
-		DialogueLine managerDialogueLine2 = new QuestDialogueLine("Wow! There's a room over there with a scary old man! Clear him out for me. One way or the other...", killAngryBby);
-		DialogueLine managerDialogueLine3 = new DialogueLine("Well, that's certainly a disappointment");
+		DialogueLine managerDialogueLine2 = new DialogueLine("Well, that's certainly a disappointment");
+		DialogueLine managerDialogueLine3 = new PathDialogueLine(
+				"Okay, in that room over there, there's a scary old man who refuses to leave.", 7001);
+		DialogueLine managerDialogueLine4 = new DialogueLine("I want you to get rid of him. Quickly. Will you do it?");
+		DialogueLine managerDialogueLine5 = new QuestDialogueLine("Great! You will rewarded handsomely.", killAngryBby);
 
-		Response playerResponse12 = new Response(managerDialogueLine2, "I'm much more than that. I'm the best in the business!");
-		Response playerResponse122 = new Response(managerDialogueLine2, "Yes.");
-		Response playerResponse13 = new Response(managerDialogueLine3, "No, I think you've mistaken me for someone.");
+		Response playerResponse13 = new Response(managerDialogueLine3,
+				"I'm much more than that. I'm the best in the business!");
+		Response playerResponse132 = new Response(managerDialogueLine3, "Yes.");
+		Response playerResponse12 = new Response(managerDialogueLine2, "No, I think you've mistaken me for someone.");
+
+		Response playerResponse34 = new Response(managerDialogueLine4, "And?");
+		Response playerResponse342 = new Response(managerDialogueLine4, "Don't tell me...");
+
+		Response playerResponse42 = new Response(managerDialogueLine2, "I will do no such thing!");
+		Response playerResponse45 = new Response(managerDialogueLine5, "Sure! Time for him to meet the grim reaper!");
 
 		DirectedGraph<DialogueLine, Response> managerDialogueGraph = new DirectedGraph<DialogueLine, Response>();
 
 		managerDialogueGraph.addNode(managerDialogueLine1);
 		managerDialogueGraph.addNode(managerDialogueLine2);
 		managerDialogueGraph.addNode(managerDialogueLine3);
+		managerDialogueGraph.addNode(managerDialogueLine4);
+		managerDialogueGraph.addNode(managerDialogueLine5);
 
-		managerDialogueGraph.addLink(managerDialogueLine1, playerResponse12);
-		managerDialogueGraph.addLink(managerDialogueLine1, playerResponse122);
 		managerDialogueGraph.addLink(managerDialogueLine1, playerResponse13);
+		managerDialogueGraph.addLink(managerDialogueLine1, playerResponse132);
+		managerDialogueGraph.addLink(managerDialogueLine1, playerResponse12);
 
-		Dialogue managerDialogue = new Dialogue(managerDialogueGraph, managerDialogueLine1);		
+		managerDialogueGraph.addLink(managerDialogueLine3, playerResponse34);
+		managerDialogueGraph.addLink(managerDialogueLine3, playerResponse342);
+
+		managerDialogueGraph.addLink(managerDialogueLine4, playerResponse42);
+		managerDialogueGraph.addLink(managerDialogueLine4, playerResponse45);
+
+		Dialogue managerDialogue = new Dialogue(managerDialogueGraph, managerDialogueLine1);
 
 		// 2. Entity Inventory
-		
 
 		// 3. Entities
-		Entity manager = new Entity(1001, "Manager", "He's just doing his job...", new Attributes(1,1,5,3), 1, new Inventory(), managerDialogue, true);
-		
-		Inventory angrymanInv  =new Inventory();
-		angrymanInv.equipWeapon(rabidClaws);
-		Entity angryman = new Entity(1002, "Angry Man", "He's VERY angry. And old.", new Attributes(5,3,4,0), 1, angrymanInv, Dialogue.NO_DIALOGUE, false);
+		Entity manager = new Entity(1001, "Manager", "He's just doing his job...", new Attributes(1, 1, 5, 3), 1,
+				new Inventory(), managerDialogue, true);
 
+		Inventory angrymanInv = new Inventory();
+		angrymanInv.equipWeapon(rabidClaws);
+		Entity angryman = new Entity(1002, "Angry Man", "He's VERY angry. And old.", new Attributes(5, 3, 4, 0), 1,
+				angrymanInv, Dialogue.NO_DIALOGUE, false);
 
 		EnumMap<Attribute, Integer> attributeDistribution = new EnumMap<>(Attribute.class);
 		attributeDistribution.put(Attribute.STRENGTH, 4);
@@ -147,9 +168,8 @@ public class Game {
 		attributeDistribution.put(Attribute.CONSTITUTION, 3);
 		attributeDistribution.put(Attribute.CHARISMA, 0);
 
-		EntityTemplate zombie = new EntityTemplate(1100, "Zombie", "He's definitely rating this place 1-star!", Weapon.FISTS, new ArrayList<Item>(),  Dialogue.NO_DIALOGUE, attributeDistribution);
-
-
+		EntityTemplate zombie = new EntityTemplate(1100, "Zombie", "He's definitely rating this place 1-star!",
+				Weapon.FISTS, new ArrayList<Item>(), Dialogue.NO_DIALOGUE, attributeDistribution);
 
 		// 4. Location
 		Inventory lobbyItemsOnGround = new Inventory();
@@ -182,13 +202,12 @@ public class Game {
 
 		// 5. Quests
 
-		
-
-		//6. Player and Campaign
+		// 6. Player and Campaign
 		List<Integer> knownPathIds = new ArrayList<Integer>();
-		knownPathIds.add(7001);
+		//knownPathIds.add(7001);
 
-		Entity playerEntity = new Entity(1000, "kimmu", "A big baby", new Attributes(4,4,4,1), 1, new Inventory(), Dialogue.NO_DIALOGUE, false);
+		Entity playerEntity = new Entity(1000, "kimmu", "A big baby", new Attributes(4, 4, 4, 1), 1, new Inventory(),
+				Dialogue.NO_DIALOGUE, false);
 		PlayerAvatar player = new PlayerAvatar(playerEntity, lobby, knownPathIds, new QuestLog());
 
 		List<EntityTemplate> entityTemplates = new ArrayList<EntityTemplate>();
@@ -197,15 +216,16 @@ public class Game {
 		List<Item> campaignItems = new ArrayList<Item>();
 		campaignItems.add(reward);
 
-		CampaignData testCampaignData = new CampaignData("A hotel of doom!", "A eerie hotel looms before you! Begin your journey and find out its true secrets!", entityTemplates, campaignQuests, campaignItems);
+		CampaignData testCampaignData = new CampaignData("A hotel of doom!",
+				"A eerie hotel looms before you! Begin your journey and find out its true secrets!", entityTemplates,
+				campaignQuests, campaignItems);
 		CampaignState testCampaignState = new CampaignState(maximalGraph);
 		Campaign campaign = new Campaign(testCampaignData, testCampaignState, player);
 
 		return new Game(campaign, player);
 	}
 
-	
-	public Game(Campaign campaign, PlayerAvatar player){
+	public Game(Campaign campaign, PlayerAvatar player) {
 		this.currentCampaign = campaign;
 		this.player = player;
 

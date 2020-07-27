@@ -28,8 +28,7 @@ public class TallyObjective extends Objective {
 
     @Override
     public String getListForm() {
-        // TODO Auto-generated method stub
-        return null;
+        return name + ": (" + count + "/" +  targetQuantity + ") killed!";
     }
 
     @Override

@@ -2,8 +2,11 @@ package com.ananotherrpg.entity;
 
 import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.entity.dialogue.Dialogue;
+import com.ananotherrpg.entity.dialogue.DialogueTraverser;
 import com.ananotherrpg.inventory.Inventory;
+import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.Weapon;
+import com.ananotherrpg.io.IOManager;
 
 /**
  * The Entity class represents "living beings" in the game
@@ -63,6 +66,19 @@ public class Entity implements IIdentifiable {
 		this.isDead = isDead;
 	}
 
+	public void equipWeapon(Weapon weapon){
+		IOManager.println("You equip the weapon " + weapon.getName());
+		inventory.equipWeapon(weapon);
+	}
+
+	public void applyModifiers(AttributeModifier attributeModifier) {
+		attributes.addModifier(attributeModifier);
+	}
+
+	public void use(Item item) {
+		inventory.use(item, this);
+	}
+
 	@Override
 	public String getName() {
 
@@ -83,14 +99,6 @@ public class Entity implements IIdentifiable {
 		return dialogue;
 	}
 
-	public void equipWeapon(Weapon weapon){
-		//update item effects
-		inventory.equipWeapon(weapon);
-	}
-
-	public void applyModifiers(AttributeModifier attributeModifier) {
-		attributes.addModifier(attributeModifier);
-	}
 
 	@Override
 	public String getListForm() {
@@ -117,5 +125,7 @@ public class Entity implements IIdentifiable {
 		return entityID;
 	}
 
-	
+	public DialogueTraverser startDialogue(Entity playerEntity) {
+		return dialogue.getTraverser(this, playerEntity);
+	}
 }

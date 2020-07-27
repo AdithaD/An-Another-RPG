@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Optional;
 
 import com.ananotherrpg.entity.Attributes;
 import com.ananotherrpg.entity.Attributes.Attribute;
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.entity.Player;
+import com.ananotherrpg.entity.PlayerAvatar;
+import com.ananotherrpg.entity.QuestLog;
 import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.entity.dialogue.QuestDialogueLine;
@@ -20,14 +22,16 @@ import com.ananotherrpg.inventory.Weapon;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
-import com.ananotherrpg.level.Campaign;
+import com.ananotherrpg.level.CampaignData;
+import com.ananotherrpg.level.CampaignState;
 import com.ananotherrpg.level.EntityTemplate;
 import com.ananotherrpg.level.Location;
+import com.ananotherrpg.level.LocationGraph;
 import com.ananotherrpg.level.Objective;
+import com.ananotherrpg.level.Path;
 import com.ananotherrpg.level.QuestTemplate;
 import com.ananotherrpg.level.TallyObjective;
-import com.ananotherrpg.util.DirectedDataGraph;
-import com.ananotherrpg.util.Graph;
+import com.ananotherrpg.util.DirectedGraph;
 
 /**
  * The Game class is reponsible for loading or creating new Campaigns, and providing them to Player object to play.
@@ -35,7 +39,7 @@ import com.ananotherrpg.util.Graph;
 public class Game {
 
 	private Campaign currentCampaign;
-	private Player player;
+	private PlayerAvatar player;
 
 	private enum GameState {
 		MENU, CAMPAIGN
@@ -52,8 +56,16 @@ public class Game {
 			ArrayList<String> options = new ArrayList<String>(
 					Arrays.asList("Create a new campaign", "Load a previous campaign", "Quit :("));
 
-			String input = IOManager.listAndQueryUserInputAgainstStringsWithoutExit(options, ListType.NUMBERED,
-					SelectionMethod.NUMBERED);
+			Optional<String> opInput = IOManager.listAndQueryUserInputAgainstStrings(options, ListType.NUMBERED,
+					SelectionMethod.NUMBERED, false);
+
+			String input;
+			if(opInput.isPresent()){
+				input = opInput.get();
+			}else{
+				throw new IllegalStateException("User didn't choose an option!");
+			}		
+			 
 
 			Game game;
 			if (input == options.get(0)) {
@@ -74,7 +86,7 @@ public class Game {
 	private void start() {
 		gameState = GameState.CAMPAIGN;
 
-		player.play(currentCampaign);
+		currentCampaign.play();
 	}
 
 	public static Game testGame(){
@@ -83,20 +95,30 @@ public class Game {
 		// (Inventory) 3. (Entity) 4. (Location) 5.(Quest, LocationGraph) 6.(Campaign)
 
 		// 1. Items / ItemStacks
-		Item key = new Item(0000,"Key", "A rusty old key", 1, 10);
+		Item key = new Item(0000,"Key", "A rusty old key", 1, 10, false);
+		Item reward = new Item(0001, "Reward", "This is all you could ever ask for!", 5, 1000, false);
 		Weapon mjollnir = new Weapon(0101, "Mjollnir", "The hammer of legend", 20, 150, 3, 0.2, 2);
 		Weapon rabidClaws = new Weapon(0102, "Rabid Claws", "Biological warfare.", 0, 0, 4, 0.5, 1.5);
 
+		// Quests / Objectives
+		Objective killAngryManObjective = new TallyObjective("Kill the Angry Man", 1002, GameEvent.KILL, 1);
+		List<Objective> objectives = new ArrayList<Objective>();
+		objectives.add(killAngryManObjective);
+
+		QuestTemplate killAngryBby = new QuestTemplate(3000, "Save the hotel", "A quest of upmost importance", objectives);
+		List<QuestTemplate> campaignQuests = new ArrayList<QuestTemplate>();
+		campaignQuests.add(killAngryBby);
+
 		// 1 .Dialogue
 		DialogueLine managerDialogueLine1 = new DialogueLine("Hello! Are you the adventurer I asked for?");
-		DialogueLine managerDialogueLine2 = new QuestDialogueLine("Wow! There's a room over there with a scary old man! Clear him out for me. One way or the other...",1);
+		DialogueLine managerDialogueLine2 = new QuestDialogueLine("Wow! There's a room over there with a scary old man! Clear him out for me. One way or the other...", killAngryBby);
 		DialogueLine managerDialogueLine3 = new DialogueLine("Well, that's certainly a disappointment");
 
 		Response playerResponse12 = new Response(managerDialogueLine2, "I'm much more than that. I'm the best in the business!");
 		Response playerResponse122 = new Response(managerDialogueLine2, "Yes.");
 		Response playerResponse13 = new Response(managerDialogueLine3, "No, I think you've mistaken me for someone.");
 
-		DirectedDataGraph<DialogueLine, Response> managerDialogueGraph = new DirectedDataGraph<DialogueLine, Response>();
+		DirectedGraph<DialogueLine, Response> managerDialogueGraph = new DirectedGraph<DialogueLine, Response>();
 
 		managerDialogueGraph.addNode(managerDialogueLine1);
 		managerDialogueGraph.addNode(managerDialogueLine2);
@@ -150,37 +172,40 @@ public class Game {
 				room1Entities, room1ItemsOnGround);
 
 		// 5. LocationGraph
-		Graph<Location> locations = new Graph<Location>();
+		LocationGraph maximalGraph = new LocationGraph();
 
-		locations.addNode(lobby);
-		locations.addNode(room1);
+		maximalGraph.addNewLocation(lobby);
+		maximalGraph.addNewLocation(room1);
 
-		locations.addLink(lobby, room1, false);
+		Path lobbyRoom1Path = new Path(7001, "A sketchy door", "Seems very eerie", lobby, room1, true);
+		maximalGraph.addPath(lobbyRoom1Path);
 
 		// 5. Quests
 
-		Objective killAngryManObjective = new TallyObjective("Kill the Angry Man", angryman.getID(), GameEvent.KILL, 1);
-		List<Objective> objectives = new ArrayList<Objective>();
-		objectives.add(killAngryManObjective);
-
-		QuestTemplate killAngryBby = new QuestTemplate(3000, "Save the hotel", "A quest of upmost importance", objectives);
-		List<QuestTemplate> campaignQuests = new ArrayList<QuestTemplate>();
-		campaignQuests.add(killAngryBby);
+		
 
 		//6. Player and Campaign
+		List<Integer> knownPathIds = new ArrayList<Integer>();
+		knownPathIds.add(7001);
+
 		Entity playerEntity = new Entity(1000, "kimmu", "A big baby", new Attributes(4,4,4,1), 1, new Inventory(), Dialogue.NO_DIALOGUE, false);
-		Player player = new Player(playerEntity, lobby);
+		PlayerAvatar player = new PlayerAvatar(playerEntity, lobby, knownPathIds, new QuestLog());
 
 		List<EntityTemplate> entityTemplates = new ArrayList<EntityTemplate>();
 		entityTemplates.add(zombie);
 
-		Campaign testCampaign = new Campaign("A hotel of doom!", "A eerie hotel looms before you! Begin your journey and find out its true secrets!", entityTemplates, campaignQuests, locations);
+		List<Item> campaignItems = new ArrayList<Item>();
+		campaignItems.add(reward);
 
-		return new Game(testCampaign, player);
+		CampaignData testCampaignData = new CampaignData("A hotel of doom!", "A eerie hotel looms before you! Begin your journey and find out its true secrets!", entityTemplates, campaignQuests, campaignItems);
+		CampaignState testCampaignState = new CampaignState(maximalGraph);
+		Campaign campaign = new Campaign(testCampaignData, testCampaignState, player);
+
+		return new Game(campaign, player);
 	}
 
 	
-	public Game(Campaign campaign, Player player){
+	public Game(Campaign campaign, PlayerAvatar player){
 		this.currentCampaign = campaign;
 		this.player = player;
 

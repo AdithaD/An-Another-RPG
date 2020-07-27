@@ -1,18 +1,18 @@
 package com.ananotherrpg.level;
 
-import java.util.Map;
-
-import com.ananotherrpg.util.Graph;
-
+/**
+ * Wraps the mutable state of the Campaign. This will be the data in the save
+ * file + Player Data
+ */
 public class CampaignState {
 
-    private Graph<Location> locations; 
-   
+    private LocationMananger locationManager;
 
-    public CampaignState(Graph<Location> locations) {
-        this.locations = locations;
-        
+    public CampaignState(LocationGraph maximalGraph) {
+        this.locationManager = new LocationMananger(maximalGraph);
     }
 
-    
+    public LocationMananger getLocationManager() {
+        return locationManager;
+    }
 }

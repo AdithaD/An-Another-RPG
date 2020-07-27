@@ -9,8 +9,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.ananotherrpg.IIdentifiable;
-import com.ananotherrpg.entity.dialogue.DialogueLine;
+import com.ananotherrpg.IQueryable;
 
 public class IOManager {
 
@@ -43,8 +42,8 @@ public class IOManager {
 
     }
 
-    public static List<String> extractIdentifiers(List<? extends IIdentifiable> list) {
-        return list.stream().map(IIdentifiable::getName).collect(Collectors.toList());
+    public static List<String> extractIQueryableListForms(List<? extends IQueryable> list) {
+        return list.stream().map(IQueryable::getListForm).collect(Collectors.toList());
     }
 
     public static void listStrings(List<String> data, ListType type) {
@@ -68,17 +67,17 @@ public class IOManager {
         }
     }
 
-    public static void listIdentifiers(List<? extends IIdentifiable> list, ListType type) {
-        listStrings(extractIdentifiers(list), type);
+    public static void listIQueryables(List<? extends IQueryable> list, ListType type) {
+        listStrings(extractIQueryableListForms(list), type);
     }
 
-    public static Optional<String> queryUserInputAgainstStrings(List<String> data, SelectionMethod selectionMethod) {
+    public static Optional<String> queryUserInputAgainstStrings(List<String> data, SelectionMethod selectionMethod, boolean canExit) {
         if (data.isEmpty()) {
             return Optional.empty();
         } else {
             String validatedInput = "";
             if (selectionMethod == SelectionMethod.NUMBERED) {
-                println("Enter choice number: ");
+                print("Enter choice number: ");
 
                 String[] intToStringMap = data.toArray(new String[0]);
 
@@ -86,7 +85,7 @@ public class IOManager {
 
                 while ((!(input >= 1) && (input <= intToStringMap.length))) {
                     String inputData = s.nextLine().trim();
-                    if (inputData.equalsIgnoreCase("Exit")) {
+                    if (inputData.equalsIgnoreCase("Exit") && canExit) {
                         return Optional.empty();
                     } else {
                         try {
@@ -101,7 +100,7 @@ public class IOManager {
                 String input = s.nextLine().trim();
 
                 while (!data.contains(input)) {
-                    if (input.equalsIgnoreCase("Exit")) {
+                    if (input.equalsIgnoreCase("Exit") && canExit) {
                         return Optional.empty();
                     }
                     println("That's not a valid option");
@@ -115,48 +114,14 @@ public class IOManager {
         }
     }
 
-    // replace
-    public static String queryUserInputAgainstStringsWithoutExit(List<String> data, SelectionMethod selectionMethod) {
-        String validatedInput = "";
-        if (selectionMethod == SelectionMethod.NUMBERED) {
-            println("Enter choice number: ");
-
-            String[] intToStringMap = data.toArray(new String[0]);
-
-            int input = -1;
-
-            while ((!(input >= 1) && (input <= intToStringMap.length))) {
-                String inputData = s.nextLine().trim();
-
-                try {
-                    input = Integer.parseInt(inputData.trim());
-                } catch (NumberFormatException e) {
-                    println("That's not a valid option!");
-                }
-
-            }
-            validatedInput = intToStringMap[input - 1];
-        } else if (selectionMethod == SelectionMethod.TEXT) {
-            String input = s.nextLine().trim();
-
-            while (!data.contains(input)) {
-                println("That's not a valid option");
-                input = s.nextLine().trim();
-            }
-
-            validatedInput = input;
-        }
-
-        return validatedInput;
-
-    }
-
-    public static <T extends IIdentifiable> Optional<T> queryUserInputAgainstIdentifiers(List<T> data,
-            SelectionMethod selectionMethod) {
+    public static <T extends IQueryable> Optional<T> queryUserInputAgainstIQueryable(List<T> data,
+            SelectionMethod selectionMethod, boolean canExit) {
         Map<String, T> options = data.stream().collect(Collectors.toMap(T::getName, Function.identity()));
 
-        Optional<String> optionalData = queryUserInputAgainstStrings(new ArrayList<String>(options.keySet()),
-                selectionMethod);
+        List<String> optionNames = data.stream().map(T::getName).collect(Collectors.toList());
+
+        Optional<String> optionalData = queryUserInputAgainstStrings(new ArrayList<String>(optionNames),
+                selectionMethod, canExit);
 
         if (optionalData.isPresent()) {
             try {
@@ -173,11 +138,11 @@ public class IOManager {
     }
 
     public static <T> Optional<T> queryUserInputAgainstCustomMap(List<T> data, Function<? super T, ? extends String> keyMapper,
-            SelectionMethod selectionMethod) {
+            SelectionMethod selectionMethod, boolean canExit) {
         Map<String, T> options = data.stream().collect(Collectors.toMap(keyMapper, Function.identity()));
 
         Optional<String> optionalData = queryUserInputAgainstStrings(new ArrayList<String>(options.keySet()),
-                selectionMethod);
+                selectionMethod, canExit);
 
         if (optionalData.isPresent()) {
             try {
@@ -194,15 +159,15 @@ public class IOManager {
     }
 
     public static Optional<String> listAndQueryUserInputAgainstStrings(List<String> data, ListType type,
-            SelectionMethod method) {
+            SelectionMethod method, boolean canExit) {
         listStrings(data, type);
-        return queryUserInputAgainstStrings(data, method);
+        return queryUserInputAgainstStrings(data, method, canExit);
     }
 
-    public static <T extends IIdentifiable> Optional<T> listAndQueryUserInputAgainstIdentifiers(List<T> data, ListType type,
-            SelectionMethod method) {
-        listIdentifiers(data, type);
-        return queryUserInputAgainstIdentifiers(data, method);
+    public static <T extends IQueryable> Optional<T> listAndQueryUserInputAgainstIQueryables(List<T> data, ListType type,
+            SelectionMethod method,boolean canExit) {
+        listIQueryables(data, type);
+        return queryUserInputAgainstIQueryable(data, method, canExit);
     }
 
     public static void println(String text) {
@@ -212,13 +177,5 @@ public class IOManager {
     public static void print(String text) {
         System.out.print(text);
     }
-
-	public static String listAndQueryUserInputAgainstStringsWithoutExit(List<String> options, ListType listType,
-			SelectionMethod selectionMethod) {
-        listStrings(options, listType);
-		return queryUserInputAgainstStringsWithoutExit(options, selectionMethod);
-	}
-
-	public static void println(DialogueLine currentLine) {
-	}
+    
 }

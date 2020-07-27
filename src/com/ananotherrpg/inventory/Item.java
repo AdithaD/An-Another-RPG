@@ -13,12 +13,16 @@ public class Item implements IIdentifiable{
 	protected int weight;
 	protected int sellPrice;
 
-	public Item(int itemID, String name, String description, int weight, int sellPrice) {
+	private boolean consumeOnUse;
+
+	public Item(int itemID, String name, String description, int weight, int sellPrice, boolean consumeOnUse) {
 		this.itemID = itemID;
 		this.name = name;
 		this.description = description;
 		this.weight = weight;
 		this.sellPrice = sellPrice;
+
+		this.consumeOnUse = consumeOnUse;
 	}
 	
 	public int getWeight() {
@@ -48,15 +52,16 @@ public class Item implements IIdentifiable{
 
 	@Override
 	public String getListForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Item: " + name;
 	}
 
 	@Override
 	public String getDetailForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return name + "\n" + description;
 	}
 
+	public boolean shouldConsumeOnUse(){
+		return consumeOnUse;
+	}
 	
 }

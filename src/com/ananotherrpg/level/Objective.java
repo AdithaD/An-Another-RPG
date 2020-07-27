@@ -12,6 +12,7 @@ public abstract class Objective implements IQueryable, IEventObserver{
     protected String name;
 	protected int targetID;
 
+    // The GameEvent that this objective will update with
     protected GameEvent gameEvent;
 
     public abstract boolean isComplete();

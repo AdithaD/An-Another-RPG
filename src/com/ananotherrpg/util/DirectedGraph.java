@@ -1,18 +1,19 @@
 package com.ananotherrpg.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DirectedDataGraph<T, S extends IDirectedDataLink<T>> {
+public class DirectedGraph<T, S extends IDirectedLink<T>> {
     private Map<T, List<S>> incidenceMap;
     
-    public DirectedDataGraph(Map<T, List<S>> incidenceMap){
+    public DirectedGraph(Map<T, List<S>> incidenceMap){
         this.incidenceMap = incidenceMap;
     }
 
-    public DirectedDataGraph() {
+    public DirectedGraph() {
         this.incidenceMap = new HashMap<T, List<S>>();
 	}
 
@@ -26,11 +27,11 @@ public class DirectedDataGraph<T, S extends IDirectedDataLink<T>> {
 
     }
 
-    public void removeNode(T node){
-        incidenceMap.remove(node);
+    public void removeNode(T target){
+        incidenceMap.remove(target);
 
-        for (T line : incidenceMap.keySet()) {
-            List<S> incidentLinks = incidenceMap.get(line);
+        for (T node : incidenceMap.keySet()) {
+            List<S> incidentLinks = incidenceMap.get(node);
             incidentLinks
             .stream()
             .filter(link -> link.getIncident().equals(node))
@@ -42,12 +43,15 @@ public class DirectedDataGraph<T, S extends IDirectedDataLink<T>> {
         incidenceMap.get(node).remove(link);
     }
 
-	public boolean hasNextDialogue(T line) {
-		return !incidenceMap.get(line).isEmpty();
+	public boolean hasNextNode(T node) {
+		return !incidenceMap.get(node).isEmpty();
     }
+	public boolean contains(T node) {
+		return incidenceMap.containsKey(node);
+	}
 
-    public List<S> getLinks(T line){
-        return incidenceMap.get(line);
-    }
+	public List<S> getLinks(T node) {
+		return Collections.unmodifiableList(incidenceMap.get(node));
+	}
     
 }

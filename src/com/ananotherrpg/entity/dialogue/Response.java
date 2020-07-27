@@ -1,19 +1,18 @@
 package com.ananotherrpg.entity.dialogue;
 
-import com.ananotherrpg.entity.Player;
-import com.ananotherrpg.util.IDirectedDataLink;
+import com.ananotherrpg.IQueryable;
+import com.ananotherrpg.entity.Entity;
+import com.ananotherrpg.util.IDirectedLink;
 
-public class Response implements IDirectedDataLink<DialogueLine>{
+public class Response implements IDirectedLink<DialogueLine>, IQueryable{
 
-    private DialogueLine incidentLine;
-    private String responseText;
-    protected boolean isActive;
+    private final DialogueLine incidentLine;
+    private final String responseText;
 
     public Response(DialogueLine incidentLine, String responseText){
         this.incidentLine = incidentLine;
         this.responseText = responseText;
 
-        this.isActive = false;
     }
 
     @Override
@@ -21,17 +20,22 @@ public class Response implements IDirectedDataLink<DialogueLine>{
         return incidentLine;
     }
 
-    @Override
-    public boolean isTraversible() {
-        return isActive;
-    }
-
-    public void reevaluateActiveStatus(Player player){
-        
-    }
-
     public String getResponseText() {
         return responseText;
+    }
+
+    @Override
+    public String getName() {
+        return responseText;
+    }
+
+    @Override
+    public String getListForm() {
+        return "Say \"" + responseText + "\"";
+    }
+
+    public boolean isViable(Entity source, Entity target){
+        return true;
     }
 
 }

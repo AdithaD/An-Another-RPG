@@ -1,5 +1,6 @@
 package com.ananotherrpg.level;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 import com.ananotherrpg.IIdentifiable;
@@ -53,14 +54,21 @@ public class Quest implements IIdentifiable{
 
 	@Override
 	public String getListForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	@Override
 	public String getDetailForm() {
-		// TODO Auto-generated method stub
-		return null;
+		String detailForm = "\n" 
+		+ "Quest: " + name + "\n" 
+		+ description + " \n"
+		+ "Objectives: " + "\n";
+
+		for (Objective objective : objectives) {
+			detailForm += objective.getListForm() + "\n";
+		}
+
+		return detailForm;
 	}
 
 	@Override

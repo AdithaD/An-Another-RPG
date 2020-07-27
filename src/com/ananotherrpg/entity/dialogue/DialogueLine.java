@@ -1,13 +1,17 @@
 package com.ananotherrpg.entity.dialogue;
 
 public class DialogueLine {
-    private String dialogue;
+    private String line;
 
-    public DialogueLine(String dialogue){
-        this.dialogue = dialogue;
+    public DialogueLine(String line){
+        this.line = line;
     }
 
-    public String getDialogue(){
-        return dialogue;
+    public String getLine(){
+        return line;
     }
+
+	public void visit(DialogueTraverser dialogueTraverser) {
+        
+	}
 }

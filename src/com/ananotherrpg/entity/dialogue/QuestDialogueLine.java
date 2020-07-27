@@ -1,18 +1,23 @@
 package com.ananotherrpg.entity.dialogue;
 
-import com.ananotherrpg.entity.Player;
+import com.ananotherrpg.level.QuestTemplate;
 
 public class QuestDialogueLine extends DialogueLine {
 
-	private int questID;
+	private QuestTemplate questTemplate;
 	
-	public QuestDialogueLine(String dialogue, int questID) {
+	public QuestDialogueLine(String dialogue, QuestTemplate questTemplate) {
 		super(dialogue);
-		this.questID = questID;
+		this.questTemplate = questTemplate;
 	}
 
-	public int getQuestID() {
-		return questID;
+	public QuestTemplate getQuestTemplate() {
+		return questTemplate;
+	}
+
+	@Override
+	public void visit(DialogueTraverser dialogueTraverser) {
+		dialogueTraverser.recordQuest(questTemplate);
 	}
 	
 }

@@ -1,11 +1,15 @@
 package com.ananotherrpg.level;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ananotherrpg.IIdentifiable;
+import com.ananotherrpg.IQueryable;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.inventory.Inventory;
+import com.ananotherrpg.inventory.ItemStack;
 
 public class Location implements IIdentifiable {
 
@@ -34,7 +38,7 @@ public class Location implements IIdentifiable {
 	}
 
 	public List<Entity> getPermanentEntities() {
-		return entities;
+		return Collections.unmodifiableList(entities);
 	}
 
 	public Inventory getItemStacks() {
@@ -48,8 +52,7 @@ public class Location implements IIdentifiable {
 
 	@Override
 	public String getListForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Location: " + name;
 	}
 
 	@Override
@@ -61,6 +64,22 @@ public class Location implements IIdentifiable {
 	@Override
 	public int getID() {
 		return locationID;
+	}
+
+	public boolean hasEntities() {
+		return !entities.isEmpty();
+	}
+
+	public void removeItem(ItemStack itemStack) {
+		itemsOnGround.removeFromInventory(itemStack);
+	}
+
+	public List<IIdentifiable> getIIdentifiables() {
+		List<IIdentifiable> identifiables = new ArrayList<IIdentifiable>();
+
+		identifiables.addAll(entities);
+		identifiables.addAll(itemsOnGround.getItems().stream().map(ItemStack::getItem).collect(Collectors.toList()));
+		return identifiables;
 	}
 
 }

@@ -4,9 +4,9 @@ import com.ananotherrpg.entity.AttributeModifier;
 import com.ananotherrpg.entity.Entity;
 
 public class Potion extends Item{
-    public Potion(int itemID, String name, String description, int weight, int sellPrice) {
+    public Potion(int itemID, String name, String description, int weight, int sellPrice, AttributeModifier attributeModifier){
         super(itemID, name, description, weight, sellPrice, true);
-        // TODO Auto-generated constructor stub
+        this.attributeModifier = attributeModifier;
     }
 
     private AttributeModifier attributeModifier;

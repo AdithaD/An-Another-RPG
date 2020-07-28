@@ -17,4 +17,8 @@ public class LocationMananger {
 		return maximalGraph.getKnownAccessibleLocations(location, knownIntegersIDs);
 	}
 
+	public Location getLocation(int ID) {
+		return maximalGraph.findLocation(ID);
+	}
+
 }

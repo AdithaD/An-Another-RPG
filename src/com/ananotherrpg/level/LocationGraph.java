@@ -23,8 +23,11 @@ public class LocationGraph {
 
     public List<Location> getKnownAccessibleLocations(Location start, List<Integer> knownIntegersIDs){
         return locationGraph.getLinks(start).stream() //List<Path> -> Stream
+        .peek(e -> System.out.println(e.getID()))
         .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
+        .peek(e -> System.out.println(e.getID()))
         .filter(e -> knownIntegersIDs.contains(e.getID())) // Filters stream to get only known paths
+        .peek(e -> System.out.println(e.getID()))
         .map(e -> e.getOther(start)) // Gets the Location on the other side of the path
         .collect(Collectors.toList()); // Stream -> List<Location>
     }

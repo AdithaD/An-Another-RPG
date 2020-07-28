@@ -18,7 +18,6 @@ public class Entity implements IIdentifiable {
 	private String name;
 	private String description;
 
-	private int hp;
 	private Attributes attributes;
 	
 	private int level;
@@ -38,7 +37,6 @@ public class Entity implements IIdentifiable {
 
 		this.attributes = attributes;
 		this.level = level;
-		this.hp = attributes.calculateMaxHp();
 		this.xp = 0;
 
 		this.inventory = inventory;
@@ -48,14 +46,13 @@ public class Entity implements IIdentifiable {
 		this.isDead = isDead;
 	}
 
-	public Entity(int entityID, String name, String description, Attributes attributes, int hp, int level, int xp,
+	public Entity(int entityID, String name, String description, Attributes attributes, int level, int xp,
 			Inventory inventory, Dialogue dialogue, boolean isDead) {
 		this.entityID = entityID;
 		this.name = name;
 		this.description = description;
 
 		this.attributes = attributes;
-		this.hp = hp;
 		this.level = level;
 		this.xp = xp;
 

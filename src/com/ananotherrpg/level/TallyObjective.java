@@ -16,6 +16,12 @@ public class TallyObjective extends Objective {
         count = 0;
     }
 
+    public TallyObjective(String name, int targetID, GameEvent gameEvent, int quantity, int count) {
+        super(name, targetID, gameEvent);
+        this.targetQuantity = quantity;
+        this.count = count;
+    }
+
     @Override
     public boolean isComplete() {
         return count >= targetQuantity;

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<campaign>
+    <campaignData>
+        <name>The Hotel of Doom</name>
+        <introduction>A tale of danger, risk and adventure, all located in a 5-star hotel!</introduction>
+        <entityTemplates>
+            <!-- This is for generic entities that will be spawned. All permanent entities in a location should go in the campaignState element.-->
+            <entityTemplate id="5501" name="Incarnate">
+                <description>A little small demon-like fellow. Doesn't look too happy.</description>
+                <equippedWeapon>3401</equippedWeapon>
+                <loots>
+                    <loot>
+                        <itemID>3001</itemID>
+                        <minimum>10</minimum>
+                        <maximum>20</maximum>
+                    </loot>
+                </loots>
+                <dialogue id="6001" />
+                <attributeDistribution>
+                    <attribute type="STRENGTH">5</attribute>
+                    <attribute type="AGILITY">7</attribute>
+                    <attribute type="CONSTITUTION">4</attribute>
+                    <attribute type="CHARISMA">0</attribute>
+                </attributeDistribution> <!-- Dialogue ID-->
+            </entityTemplate>
+            <entityTemplate id="5502" name="Chad">
+                <description>A muscly shirtless man with large pecs. Can't stop flexing</description>
+                <equippedWeapon>3402</equippedWeapon>
+                <loots>
+                    <loot>
+                        <itemID>3001</itemID>
+                        <minimum>30</minimum>
+                        <maximum>40</maximum>
+                    </loot>
+                </loots>
+                <dialogue id="6002" />
+                <attributeDistribution>
+                    <attribute type="STRENGTH">7</attribute>
+                    <attribute type="AGILITY">4</attribute>
+                    <attribute type="CONSTITUTION">8</attribute>
+                    <attribute type="CHARISMA">7</attribute>
+                </attributeDistribution> <!-- Dialogue ID-->
+            </entityTemplate>
+        </entityTemplates>
+        <questTemplates>
+            <questTemplate id="4001" name="Save the hotel!">
+                <description>"A quest of upmost importance!"</description>
+                <objectives>
+                    <objective name="Kill the angry man" type="tally">
+                        <targetID>5002</targetID>
+                        <gameEvent>KILL</gameEvent>
+                        <targetQuantity>1</targetQuantity>
+                    </objective>
+                </objectives>
+            </questTemplate>
+        </questTemplates>
+        <items>
+            <item id="3001" name="Ball">
+                <description>A bouncy red ball.</description>
+                <weight>1</weight>
+                <sellPrice>20</sellPrice>
+                <consumeOnUse>false</consumeOnUse>
+            </item>
+            <item id="3002" name="Key">
+                <description>A roughed-up gold key</description>
+                <weight>1</weight>
+                <sellPrice>0</sellPrice>
+                <consumeOnUse>false</consumeOnUse>
+            </item>
+            <item id="3401" name="Feral Claws" type ="weapon">
+                <description>These will definitely give your target rabies</description>
+                <weight>5</weight>
+                <sellPrice>3</sellPrice>
+                <damage>5</damage>
+                <critChance>0.2</critChance>
+                <critDamageMultiplier>2.0</critDamageMultiplier>
+            </item>
+            <item id="3402" name="Surfboard" type ="weapon">
+                <description>Don't underestimate its effectiveness</description>
+                <weight>8</weight>
+                <sellPrice>50</sellPrice>
+                <damage>10</damage>
+                <critChance>0.5</critChance>
+                <critDamageMultiplier>5.0</critDamageMultiplier>
+            </item>
+            <item id="3403" name="Mjollnir" type ="weapon">
+                <description>The legendary hammer of lightning</description>
+                <weight>8</weight>
+                <sellPrice>50</sellPrice>
+                <damage>50</damage>
+                <critChance>0.05</critChance>
+                <critDamageMultiplier>10.0</critDamageMultiplier>
+            </item>
+            <item id="3701" name="Strength Potion" type="potion">
+                <description>I'm pretty sure these are just steroids</description>
+                <weight>2</weight>
+                <sellPrice>50</sellPrice>
+                <attributeModifier attribute="STRENGTH">
+                    <modifier>3</modifier>
+                    <duration>2</duration>
+                </attributeModifier>
+            </item>
+        </items>
+        <dialogueGraphs>
+            <dialogueGraph id="6001"> <!-- maximal dialoguegraphs-->
+                <startingLine id="1" />
+                <dialogueLines>
+                    <dialogueLine id="1">
+                        <text>They don't seem to be in a talking mood</text>
+                    </dialogueLine>
+                </dialogueLines>
+            </dialogueGraph>
+            <dialogueGraph id="6002"> <!-- maximal dialoguegraphs-->
+                <startingLine id="1" />
+                <dialogueLines>
+                    <dialogueLine id="1">
+                        <text>Hello! Are you the adventurer I asked for?</text>
+                        <responses>
+                            <response>
+                                <text>No, I think you've mistaken me for someone.</text>
+                                <target>2</target>
+                            </response>
+                            <response>
+                                <text>Yes.</text>
+                                <target>3</target>
+                            </response>
+                            <response>
+                                <text>I'm much more than that. I'm the best in the business!</text>
+                                <target>3</target>
+                            </response>
+                        </responses>
+                    </dialogueLine>
+                    <dialogueLine id="2">
+                        <text>well, that's certainly a disappointment</text>
+                    </dialogueLine>
+                    <dialogueLine id="3" type="path">
+                        <text>Okay, in that room over there, there's a scary old man who refuses to leave.</text>
+                        <path id="2001"/>
+                        <responses>
+                            <response>
+                                <text>And?</text>
+                                <target>4</target>
+                            </response>
+                            <response>
+                                <text>Don't tell me...</text>
+                                <target>4</target>
+                            </response>
+                        </responses>
+                    </dialogueLine>
+                    <dialogueLine id="4">
+                        <text>I want you to get rid of him. Quickly. Will you do it?</text>
+                        <responses>
+                            <response>
+                                <text>I will do no such thing!</text>
+                                <target>2</target>
+                            </response>
+                            <response>
+                                <text>Sure! Time for him to meet the grim reaper!</text>
+                                <target>5</target>
+                            </response>
+                        </responses>
+                    </dialogueLine>
+                    <dialogueLine id="5" type="quest">
+                        <text>Great! You will rewarded handsomely.</text>
+                        <quest id="4001" />
+                    </dialogueLine>
+                </dialogueLines>
+            </dialogueGraph>
+        </dialogueGraphs>
+    </campaignData>
+    <campaignState>
+        <!--This is the initial state-->
+        
+        <locations>
+            <location id="1001" name="Lobby">
+                <description>"A large hotel lobby. It's hedonism is evident."</description>
+                <entities>
+                    <entity id="5001" name="Manager">
+                        <description>A short man with spiky hair, with a large badge on his chest labelled 'Manager'</description>
+                        <level>1</level>
+                        <inventory>
+                            <item id="3002" quantity="1"/>
+                        </inventory>
+                        <dialogue id="6002" start="1"/>
+                        <attributes>
+                            <attribute type="STRENGTH">7</attribute>
+                            <attribute type="AGILITY">11</attribute>
+                            <attribute type="CONSTITUTION">6</attribute>
+                            <attribute type="CHARISMA">8</attribute>
+                        </attributes>
+                        <isDead>false</isDead>
+                    </entity>
+                </entities>
+                <itemsOnGround>
+                    <item id="3403" quantity="1"/>
+                </itemsOnGround>
+            </location>
+            <location id="1002" name="A non-descript room">
+                <description>"A run down room."</description>
+                <entities>
+                    <entity id="5002" name="Angry Man">
+                        <level>1</level>
+                        <description>He's very angry</description>
+                        <inventory>
+                            <item id="3001" quantity = "1"/>
+                        </inventory>
+                        <dialogue id="6001" start="1"/>
+                        <attributes>
+                            <attribute type="STRENGTH">10</attribute>
+                            <attribute type="AGILITY">10</attribute>
+                            <attribute type="CONSTITUTION">8</attribute>
+                            <attribute type="CHARISMA">4</attribute>
+                        </attributes>
+                        <isDead>false</isDead>
+                    </entity>
+                </entities>
+            </location>
+        </locations>
+        <paths>
+            <path id="2001" name="A shady doorway">
+                <description>You're definitely getting shanked</description>
+                <locations>
+                    <location id="1001" />
+                    <location id="1002" />
+                </locations>
+            </path>
+            <isTraversible>true</isTraversible>
+        </paths>
+    </campaignState>
+    <player>
+        <location id="1001" />
+        <entity id="5000" name="You">
+            <description>You are quite handsome</description>
+            <level>1</level>
+            <inventory></inventory>
+            <dialogue id="6001"/>
+            <attributes>
+                <attribute type="STRENGTH">8</attribute>
+                <attribute type="AGILITY">8</attribute>
+                <attribute type="CONSTITUTION">8</attribute>
+                <attribute type="CHARISMA">8</attribute>
+            </attributes>
+            <isDead>false</isDead>
+        </entity>
+        <questLog>
+            <acceptedQuests>
+                <quest id="4001" name="Save the hotel!">
+                    <description>"A quest of upmost importance!"</description>
+                    <objectives>
+                        <objective name="Kill the angry man" type="tally">
+                            <targetID>5002</targetID>
+                            <gameEvent>KILL</gameEvent>
+                            <targetQuantity>1</targetQuantity>
+                            <count>0</count>
+                        </objective>
+                    </objectives>
+                </quest>
+            </acceptedQuests>
+            <completedQuests>
+
+            </completedQuests>
+        </questLog>
+        <knownPaths>
+            
+        </knownPaths>
+    </player>
+</campaign>

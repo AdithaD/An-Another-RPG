@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.IIdentifiable;
-import com.ananotherrpg.IQueryable;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.inventory.Inventory;
 import com.ananotherrpg.inventory.ItemStack;
@@ -18,11 +17,11 @@ public class Location implements IIdentifiable {
 	private String name;
 	private String description;
 
-	private ArrayList<Entity> entities;
+	private List<Entity> entities;
 
 	private Inventory itemsOnGround;
 
-	public Location(int locationID, String name, String description, ArrayList<Entity> entities,
+	public Location(int locationID, String name, String description, List<Entity> entities,
 			Inventory itemsOnGround) {
 		super();
 		this.locationID = locationID;

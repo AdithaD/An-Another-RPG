@@ -15,4 +15,8 @@ public class CampaignState {
     public LocationMananger getLocationManager() {
         return locationManager;
     }
+
+	public Location getLocationByID(int ID) {
+		return locationManager.getLocation(ID);
+	}
 }

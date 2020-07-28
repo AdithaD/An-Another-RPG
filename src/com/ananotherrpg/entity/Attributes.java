@@ -1,6 +1,7 @@
 package com.ananotherrpg.entity;
 
 import java.security.InvalidParameterException;
+import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -40,7 +41,15 @@ public class Attributes {
     }
 
 
-    /**
+    public Attributes(EnumMap<Attribute, Integer> attributeValues) {
+        this.strength = attributeValues.get(Attribute.STRENGTH);
+        this.agility = attributeValues.get(Attribute.AGILITY);
+        this.constitution = attributeValues.get(Attribute.CONSTITUTION);
+        this.charisma = attributeValues.get(Attribute.CHARISMA);
+	}
+
+
+	/**
      * Calculates the damage scaling for attacks based on strength
      * 
      * @return A percentage of how much weapon base damage should be scaled

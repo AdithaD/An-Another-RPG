@@ -29,7 +29,7 @@ public class Graph<T, S extends Link<T>>{
         List<T> nodes = newLink.getNodes();
 
         for (T t : nodes) {
-            adjacencyMap.get(t).add(newLink);
+        	if (!adjacencyMap.get(t).contains(newLink)) adjacencyMap.get(t).add(newLink);
         }
     }
 

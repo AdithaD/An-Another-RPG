@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.util.Graph;
 
 public class LocationGraph {
@@ -15,19 +17,39 @@ public class LocationGraph {
     private Map<Integer, Path> pathList;
     private Map<Integer, Location> locationList;
 
-    public LocationGraph(){
-        locationGraph = new Graph<Location, Path>();
-        pathList = new HashMap<Integer, Path>();
-        locationList = new HashMap<Integer, Location>();
-    }
+   
 
-    public List<Location> getKnownAccessibleLocations(Location start, List<Integer> knownIntegersIDs){
+    public LocationGraph(Graph<Location, Path> locationGraph, Map<Integer, Path> pathList,
+			Map<Integer, Location> locationList) {
+		super();
+		this.locationGraph = locationGraph;
+		this.pathList = pathList;
+		this.locationList = locationList;
+	}
+    
+    public LocationGraph(List<Location> locationList, List<Path> pathList) {
+		super();
+		this.locationGraph = new Graph<Location, Path>();
+		
+		this.pathList = pathList.stream().collect(Collectors.toMap(Path::getID, Function.identity()));
+		this.locationList = locationList.stream().collect(Collectors.toMap(Location::getID, Function.identity()));;
+		
+		for (Location location : locationList) {
+			locationGraph.addNode(location);
+		}
+		
+		for (Path path : pathList) {
+			locationGraph.addLink(path);
+		}
+	}
+    
+	public List<Location> getKnownAccessibleLocations(Location start, List<Integer> knownIntegersIDs){
         return locationGraph.getLinks(start).stream() //List<Path> -> Stream
-        .peek(e -> System.out.println(e.getID()))
+        .peek(e -> System.out.println("Before: " + e.getID()))
         .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
-        .peek(e -> System.out.println(e.getID()))
+        .peek(e -> System.out.println("MIddle: " + e.getID()))
         .filter(e -> knownIntegersIDs.contains(e.getID())) // Filters stream to get only known paths
-        .peek(e -> System.out.println(e.getID()))
+        .peek(e -> System.out.println("End: " + e.getID()))
         .map(e -> e.getOther(start)) // Gets the Location on the other side of the path
         .collect(Collectors.toList()); // Stream -> List<Location>
     }

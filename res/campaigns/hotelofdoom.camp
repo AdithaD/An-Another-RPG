@@ -67,7 +67,7 @@
                 <sellPrice>0</sellPrice>
                 <consumeOnUse>false</consumeOnUse>
             </item>
-            <item id="3401" name="Feral Claws" type ="weapon">
+            <item id="3401" name="Feral Claws" type="weapon">
                 <description>These will definitely give your target rabies</description>
                 <weight>5</weight>
                 <sellPrice>3</sellPrice>
@@ -75,7 +75,7 @@
                 <critChance>0.2</critChance>
                 <critDamageMultiplier>2.0</critDamageMultiplier>
             </item>
-            <item id="3402" name="Surfboard" type ="weapon">
+            <item id="3402" name="Surfboard" type="weapon">
                 <description>Don't underestimate its effectiveness</description>
                 <weight>8</weight>
                 <sellPrice>50</sellPrice>
@@ -83,7 +83,7 @@
                 <critChance>0.5</critChance>
                 <critDamageMultiplier>5.0</critDamageMultiplier>
             </item>
-            <item id="3403" name="Mjollnir" type ="weapon">
+            <item id="3403" name="Mjollnir" type="weapon">
                 <description>The legendary hammer of lightning</description>
                 <weight>8</weight>
                 <sellPrice>50</sellPrice>
@@ -102,7 +102,8 @@
             </item>
         </items>
         <dialogueGraphs>
-            <dialogueGraph id="6001"> <!-- maximal dialoguegraphs-->
+            <dialogueGraph id="6001">
+                <!-- maximal dialoguegraphs-->
                 <startingLine id="1" />
                 <dialogueLines>
                     <dialogueLine id="1">
@@ -110,7 +111,8 @@
                     </dialogueLine>
                 </dialogueLines>
             </dialogueGraph>
-            <dialogueGraph id="6002"> <!-- maximal dialoguegraphs-->
+            <dialogueGraph id="6002">
+                <!-- maximal dialoguegraphs-->
                 <startingLine id="1" />
                 <dialogueLines>
                     <dialogueLine id="1">
@@ -135,7 +137,7 @@
                     </dialogueLine>
                     <dialogueLine id="3" type="path">
                         <text>Okay, in that room over there, there's a scary old man who refuses to leave.</text>
-                        <path id="2001"/>
+                        <path id="2001" />
                         <responses>
                             <response>
                                 <text>And?</text>
@@ -170,62 +172,63 @@
     </campaignData>
     <campaignState>
         <!--This is the initial state-->
-        
-        <locations>
-            <location id="1001" name="Lobby">
-                <description>"A large hotel lobby. It's hedonism is evident."</description>
-                <entities>
-                    <entity id="5001" name="Manager">
-                        <description>A short man with spiky hair, with a large badge on his chest labelled 'Manager'</description>
-                        <level>1</level>
-                        <inventory>
-                            <item id="3002" quantity="1"/>
-                        </inventory>
-                        <dialogue id="6002" start="1"/>
-                        <attributes>
-                            <attribute type="STRENGTH">7</attribute>
-                            <attribute type="AGILITY">11</attribute>
-                            <attribute type="CONSTITUTION">6</attribute>
-                            <attribute type="CHARISMA">8</attribute>
-                        </attributes>
-                        <isDead>false</isDead>
-                    </entity>
-                </entities>
-                <itemsOnGround>
-                    <item id="3403" quantity="1"/>
-                </itemsOnGround>
-            </location>
-            <location id="1002" name="A non-descript room">
-                <description>"A run down room."</description>
-                <entities>
-                    <entity id="5002" name="Angry Man">
-                        <level>1</level>
-                        <description>He's very angry</description>
-                        <inventory>
-                            <item id="3001" quantity = "1"/>
-                        </inventory>
-                        <dialogue id="6001" start="1"/>
-                        <attributes>
-                            <attribute type="STRENGTH">10</attribute>
-                            <attribute type="AGILITY">10</attribute>
-                            <attribute type="CONSTITUTION">8</attribute>
-                            <attribute type="CHARISMA">4</attribute>
-                        </attributes>
-                        <isDead>false</isDead>
-                    </entity>
-                </entities>
-            </location>
-        </locations>
-        <paths>
-            <path id="2001" name="A shady doorway">
-                <description>You're definitely getting shanked</description>
-                <locations>
-                    <location id="1001" />
-                    <location id="1002" />
-                </locations>
-            </path>
-            <isTraversible>true</isTraversible>
-        </paths>
+        <locationGraph>
+            <locations>
+                <location id="1001" name="Lobby">
+                    <description>"A large hotel lobby. It's hedonism is evident."</description>
+                    <entities>
+                        <entity id="5001" name="Manager">
+                            <description>A short man with spiky hair, with a large badge on his chest labelled 'Manager'</description>
+                            <level>1</level>
+                            <inventory>
+                                <item id="3002" quantity="1" />
+                            </inventory>
+                            <dialogue id="6002" start="1" />
+                            <attributes>
+                                <attribute type="STRENGTH">7</attribute>
+                                <attribute type="AGILITY">11</attribute>
+                                <attribute type="CONSTITUTION">6</attribute>
+                                <attribute type="CHARISMA">8</attribute>
+                            </attributes>
+                            <isDead>false</isDead>
+                        </entity>
+                    </entities>
+                    <itemsOnGround>
+                        <item id="3403" quantity="1" />
+                    </itemsOnGround>
+                </location>
+                <location id="1002" name="A non-descript room">
+                    <description>"A run down room."</description>
+                    <entities>
+                        <entity id="5002" name="Angry Man">
+                            <level>1</level>
+                            <description>He's very angry</description>
+                            <inventory>
+                                <item id="3001" quantity="1" />
+                            </inventory>
+                            <dialogue id="6001" start="1" />
+                            <attributes>
+                                <attribute type="STRENGTH">10</attribute>
+                                <attribute type="AGILITY">10</attribute>
+                                <attribute type="CONSTITUTION">8</attribute>
+                                <attribute type="CHARISMA">4</attribute>
+                            </attributes>
+                            <isDead>false</isDead>
+                        </entity>
+                    </entities>
+                </location>
+            </locations>
+            <paths>
+                <path id="2001" name="A shady doorway">
+                    <description>You're definitely getting shanked</description>
+                    <locations>
+                        <location id="1001" />
+                        <location id="1002" />
+                    </locations>
+                    <isTraversible>true</isTraversible>
+                </path>
+            </paths>
+        </locationGraph>
     </campaignState>
     <player>
         <location id="1001" />
@@ -233,7 +236,7 @@
             <description>You are quite handsome</description>
             <level>1</level>
             <inventory></inventory>
-            <dialogue id="6001"/>
+            <dialogue id="6001" />
             <attributes>
                 <attribute type="STRENGTH">8</attribute>
                 <attribute type="AGILITY">8</attribute>
@@ -256,12 +259,8 @@
                     </objectives>
                 </quest>
             </acceptedQuests>
-            <completedQuests>
-
-            </completedQuests>
+            <completedQuests></completedQuests>
         </questLog>
-        <knownPaths>
-            
-        </knownPaths>
+        <knownPaths></knownPaths>
     </player>
 </campaign>

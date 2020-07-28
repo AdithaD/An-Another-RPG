@@ -14,6 +14,7 @@ public class LocationMananger {
     }
     
 	public List<Location> getAccessibleLocationsFrom(Location location, List<Integer> knownIntegersIDs) {
+		
 		return maximalGraph.getKnownAccessibleLocations(location, knownIntegersIDs);
 	}
 

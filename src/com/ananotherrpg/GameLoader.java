@@ -133,7 +133,7 @@ public class GameLoader {
                 Element campaignDataElement = (Element) docElement.getElementsByTagName("campaignState").item(0);
 
                 // Locations
-                Element locationsElement = (Element) docElement.getElementsByTagName("locations").item(0);
+                Element locationsElement = (Element) docElement.getElementsByTagName("locationGraph").item(0);
                 LocationGraph locationGraph = generateLocationGraph(locationsElement, campaignData);
 
                 campaignState = new CampaignState(locationGraph);
@@ -235,8 +235,10 @@ public class GameLoader {
         return new Quest(questID, name, description, objectives);
     }
 
-    private LocationGraph generateLocationGraph(Element locationsElement, CampaignData data) {
+    private LocationGraph generateLocationGraph(Element locationGraphElement, CampaignData data) {
         List<Location> locations = new ArrayList<Location>();
+        
+        Element locationsElement =  (Element) locationGraphElement.getElementsByTagName("locations").item(0);
         NodeList locationNodeList = locationsElement.getElementsByTagName("location");
         for (int i = 0; i < locationNodeList.getLength(); i++) {
             Node locationNode = locationNodeList.item(i);
@@ -249,7 +251,7 @@ public class GameLoader {
         Map<Integer, Location> locationToIDMap = locations.stream().collect(Collectors.toMap(Location::getID, Function.identity()));
         List<Path> paths = new ArrayList<Path>();
 
-        NodeList pathList = locationsElement.getElementsByTagName("path");
+        NodeList pathList = locationGraphElement.getElementsByTagName("path");
         for (int i = 0; i < pathList.getLength(); i++) {
             Node pathNode = pathList.item(i);
             if (pathNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -258,7 +260,7 @@ public class GameLoader {
             }
         }
 
-        LocationGraph locGraph = new LocationGraph();
+        LocationGraph locGraph = new LocationGraph(locations, paths);
 
         for (Location location : locations) {
             locGraph.addNewLocation(location);

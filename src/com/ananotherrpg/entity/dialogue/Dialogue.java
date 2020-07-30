@@ -36,4 +36,12 @@ public class Dialogue {
 		return dialogueGraph.isTerminal(line);
     }
 
+	public DialogueLine getStartingLine() {
+		return startingLine;
+  }
+  
+  public int getGraphID(){
+    return dialogueGraph.getID();
+  }
+
 }

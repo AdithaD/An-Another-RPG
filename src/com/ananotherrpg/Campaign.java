@@ -14,6 +14,7 @@ import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.CampaignData;
 import com.ananotherrpg.level.CampaignState;
 import com.ananotherrpg.level.Location;
+import com.ananotherrpg.level.Path;
 import com.ananotherrpg.level.Quest;
 
 /**
@@ -22,7 +23,7 @@ import com.ananotherrpg.level.Quest;
 public class Campaign {
     
     private final ArrayList<String> options = new ArrayList<String>(Arrays.asList(new String[] { "Look around",
-    "Move to", "Examine", "Talk", "View Quests", "View Inventory", "Pick Up", "Help" }));
+    "Move to", "Examine", "Talk", "View Quests", "View Inventory", "Pick Up", "Help", "Save" }));
 
 	private CampaignData campaignData;
 	private CampaignState campaignState;
@@ -38,6 +39,8 @@ public class Campaign {
     }
 
     public void play() {
+		IOManager.println(campaignData.getIntroduction());
+
 		while (!shouldExitCampaign) {
 			IOManager.println("What would you like to do? (Type help for options)");
 			Optional<String> opInput = IOManager.queryUserInputAgainstStrings(options, SelectionMethod.TEXT, true);
@@ -65,6 +68,9 @@ public class Campaign {
 					case "Examine":
 						examine();
 						break;
+					case "Save":
+						save();
+						break;
 					case "Help":
 						IOManager.listStrings(options, ListType.ONE_LINE);
 						break;
@@ -77,7 +83,11 @@ public class Campaign {
 
     }
     
-    public void talk() {
+    private void save() {
+		Game.saveGame(campaignState, player);
+	}
+
+	public void talk() {
 		if (!player.getCurrentLocation().hasEntities()) {
 			IOManager.println("There is no one to talk to");
 		} else {
@@ -96,16 +106,16 @@ public class Campaign {
 	}
 
 	public void moveTo() {
-		List<Location> accessibleLocations = campaignState.getLocationManager().getAccessibleLocationsFrom(player.getCurrentLocation(), player.getKnownPathIDs());
+		List<Path> accessibleLocations = campaignState.getLocationManager().getAccessiblePathsFrom(player.getCurrentLocation(), player.getKnownPathIDs());
 		if (accessibleLocations.isEmpty()) {
 			IOManager.println("There is no where to go to!");
 		} else {
-			IOManager.println("Where would you like to go ?");
+			IOManager.println("What path would you like to traverse to?");
 
-			Optional<Location> opLocation = IOManager.listAndQueryUserInputAgainstIQueryables(accessibleLocations, ListType.NUMBERED, SelectionMethod.NUMBERED, true);
+			Optional<Path> opPath = IOManager.listAndQueryUserInputAgainstIQueryables(accessibleLocations, ListType.NUMBERED, SelectionMethod.NUMBERED, true);
 
-			if (opLocation.isPresent()) {
-				player.moveTo(opLocation.get());
+			if (opPath.isPresent()) {
+				player.traverse(opPath.get());
 				IOManager.println("You move to " + player.getCurrentLocation().getName());
 			} else {
 				IOManager.println("Staying here is fine for now...");
@@ -137,7 +147,7 @@ public class Campaign {
 
 	public void pickUp() {
 		Optional<ItemStack> opItem = IOManager.listAndQueryUserInputAgainstIQueryables(
-				player.getCurrentLocation().getItemStacks().getItems(), ListType.NUMBERED, SelectionMethod.NUMBERED, true);
+				player.getCurrentLocation().getInventory().getItems(), ListType.NUMBERED, SelectionMethod.NUMBERED, true);
 		if (opItem.isPresent()) {
             player.pickUp(opItem.get());
 			

@@ -75,4 +75,8 @@ public class Quest implements IIdentifiable{
 	public int getID() {
 		return questID;
 	}
+
+	public List<? extends Objective> getObjectives() {
+		return objectives;
+	}
 }

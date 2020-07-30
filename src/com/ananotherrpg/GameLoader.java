@@ -2,6 +2,7 @@ package com.ananotherrpg;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -53,20 +54,26 @@ import org.xml.sax.SAXException;
 
 public class GameLoader {
 
-    private String filePath;
+    private File campaignFile;
+    private File saveFile;
 
-    public GameLoader(String filePath) {
-        this.filePath = filePath;
+    public GameLoader(File campaignFile) {
+        this.campaignFile = campaignFile;
     }
+    
+    public GameLoader(File campaignFile, File saveFile) {
+        this.campaignFile = campaignFile;
+        this.saveFile = saveFile;
+	}
 
-    public Game loadGame() {
-        Document doc = getDocumentFromSaveFile();
-        doc.getDocumentElement().normalize();
+	public Game loadGame() {
+        Document cfDoc = getDocument(campaignFile);
+        cfDoc.getDocumentElement().normalize();
 
         Game game;
 
         try {
-            Element docElement = doc.getDocumentElement();
+            Element docElement = cfDoc.getDocumentElement();
             // First load campaign data which is stateless
             CampaignData campaignData;
             {
@@ -127,69 +134,17 @@ public class GameLoader {
 
             }
 
-            // Second campaign STATE
             CampaignState campaignState;
-            {
-                Element campaignDataElement = (Element) docElement.getElementsByTagName("campaignState").item(0);
-
-                // Locations
-                Element locationsElement = (Element) docElement.getElementsByTagName("locationGraph").item(0);
-                LocationGraph locationGraph = generateLocationGraph(locationsElement, campaignData);
-
-                campaignState = new CampaignState(locationGraph);
-            }
-
-            // Third P L A Y E R
             PlayerAvatar player;
-            {
-                Element playerElement = (Element) docElement.getElementsByTagName("player").item(0);
+            if(saveFile != null){ // Load save state
+                Document sfDoc = getDocument(saveFile);
+                sfDoc.getDocumentElement().normalize();
 
-                Element entityElement = (Element) playerElement.getElementsByTagName("entity").item(0);
-
-                List<Quest> acceptedQuests = new ArrayList<Quest>();
-                {
-                    Element acceptedQuestsElement = (Element) playerElement.getElementsByTagName("acceptedQuests").item(0);
-                    NodeList questList = acceptedQuestsElement.getElementsByTagName("quest");
-                    for (int i = 0; i < questList.getLength(); i++) {
-                        Node questNode = questList.item(i);
-                        if (questNode.getNodeType() == Node.ELEMENT_NODE) {
-                            Element questElement = (Element) questNode;
-                            acceptedQuests.add(generateQuest(questElement));
-                        }
-                    }
-                }
-
-                List<Quest> completedQuests = new ArrayList<Quest>();
-                {
-                    Element completedQuestsElement = (Element) playerElement.getElementsByTagName("completedQuests").item(0);
-                    NodeList questList = completedQuestsElement.getElementsByTagName("quest");
-                    for (int i = 0; i < questList.getLength(); i++) {
-                        Node questNode = questList.item(i);
-                        if (questNode.getNodeType() == Node.ELEMENT_NODE) {
-                            Element questElement = (Element) questNode;
-                            completedQuests.add(generateQuest(questElement));
-                        }
-                    }
-                }
-                
-                List<Integer> knownPaths = new ArrayList<Integer>();
-                {
-                    Element knownPathsElement = (Element) playerElement.getElementsByTagName("knownPaths").item(0);
-                    NodeList pathList = knownPathsElement.getElementsByTagName("path");
-                    for (int i = 0; i < pathList.getLength(); i++) {
-                        Node pathNode = pathList.item(i);
-                        if (pathNode.getNodeType() == Node.ELEMENT_NODE) {
-                            Element pathElement = (Element) pathNode;
-                            knownPaths.add(getIDFromElement(pathElement));
-                        }
-                    }
-                }
-
-                QuestLog log = new QuestLog(acceptedQuests, completedQuests);
-                Entity playerEntity = generateEntity(entityElement, campaignData);
-                Location currentLocation = campaignState.getLocationByID(getIDFromChildElement(playerElement, "location"));
-
-               player = new PlayerAvatar(playerEntity, currentLocation, knownPaths, log);
+                campaignState = loadCampaignState(sfDoc, campaignData);
+                player = loadPlayerAvatar(sfDoc, campaignData, campaignState);
+            }else{ // Uses defined new state
+                campaignState = loadCampaignState(cfDoc, campaignData);
+                player = loadPlayerAvatar(cfDoc, campaignData, campaignState);
             }
 
             game = new Game(new Campaign(campaignData, campaignState, player));
@@ -202,6 +157,81 @@ public class GameLoader {
 
         return game;
 
+    }
+
+    private CampaignState loadCampaignState(Document doc, CampaignData campaignData){
+        Element docElement = doc.getDocumentElement();
+        CampaignState campaignState;
+        {
+            Element e_campaignState = (Element) docElement.getElementsByTagName("campaignState").item(0);
+
+            // Locations
+            Element locationsElement = (Element) docElement.getElementsByTagName("locationGraph").item(0);
+            LocationGraph locationGraph = generateLocationGraph(locationsElement, campaignData);
+
+            campaignState = new CampaignState(locationGraph);
+        }
+
+        return campaignState;
+       
+        
+    }
+
+    private PlayerAvatar loadPlayerAvatar(Document doc, CampaignData campaignData, CampaignState campaignState) {
+        Element docElement = doc.getDocumentElement();
+        PlayerAvatar avatar;
+        {
+            Element playerElement = (Element) docElement.getElementsByTagName("player").item(0);
+
+            Element entityElement = (Element) playerElement.getElementsByTagName("entity").item(0);
+
+            List<Quest> acceptedQuests = new ArrayList<Quest>();
+            {
+                Element acceptedQuestsElement = (Element) playerElement.getElementsByTagName("acceptedQuests").item(0);
+                NodeList questList = acceptedQuestsElement.getElementsByTagName("quest");
+                for (int i = 0; i < questList.getLength(); i++) {
+                    Node questNode = questList.item(i);
+                    if (questNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element questElement = (Element) questNode;
+                        acceptedQuests.add(generateQuest(questElement));
+                    }
+                }
+            }
+
+            List<Quest> completedQuests = new ArrayList<Quest>();
+            {
+                Element completedQuestsElement = (Element) playerElement.getElementsByTagName("completedQuests").item(0);
+                NodeList questList = completedQuestsElement.getElementsByTagName("quest");
+                for (int i = 0; i < questList.getLength(); i++) {
+                    Node questNode = questList.item(i);
+                    if (questNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element questElement = (Element) questNode;
+                        completedQuests.add(generateQuest(questElement));
+                    }
+                }
+            }
+            
+            List<Integer> knownPaths = new ArrayList<Integer>();
+            {
+                Element knownPathsElement = (Element) playerElement.getElementsByTagName("knownPaths").item(0);
+                NodeList pathList = knownPathsElement.getElementsByTagName("path");
+                for (int i = 0; i < pathList.getLength(); i++) {
+                    Node pathNode = pathList.item(i);
+                    if (pathNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element pathElement = (Element) pathNode;
+                        knownPaths.add(getIDFromElement(pathElement));
+                    }
+                }
+            }
+
+            QuestLog log = new QuestLog(acceptedQuests, completedQuests);
+            Entity playerEntity = generateEntity(entityElement, campaignData);
+            Location currentLocation = campaignState.getLocationByID(getIDFromChildElement(playerElement, "location"));
+
+           avatar = new PlayerAvatar(playerEntity, currentLocation, knownPaths, log);
+        }
+
+        return avatar;
     }
 
     private Quest generateQuest(Element questElement) {
@@ -321,11 +351,18 @@ public class GameLoader {
     private Entity generateEntity(Element entityElement, CampaignData data) {
         int entityID = Integer.parseInt(entityElement.getAttribute("id"));
         String name = entityElement.getAttribute("name");        
-        String description = getTextValue(entityElement, "Lobby");
+        String description = getTextValue(entityElement, "description");
 
         int level = getIntValue(entityElement, "level");
 
         Inventory inventory = new Inventory(); 
+        
+
+        if (getAttributeValue(entityElement, "inventory", "equip") != ""){
+            Weapon weapon = (Weapon) data.getItemByID(Integer.parseInt(getAttributeValue(entityElement, "inventory", "equip")));
+            inventory.equipWeapon(weapon);
+        }
+
         NodeList itemNodeList = entityElement.getElementsByTagName("item");
         for (int i = 0; i < itemNodeList.getLength(); i++) {
             Node itemNode =  itemNodeList.item(i);
@@ -370,14 +407,14 @@ public class GameLoader {
 
                 DialogueLine dialogueLine;
                 if (dialogueLineElement.getAttribute("type").equals("")) {
-                    dialogueLine = new DialogueLine(text);
+                    dialogueLine = new DialogueLine(ID, text);
                 } else if (dialogueLineElement.getAttribute("type").equals("path")) {
                     int pathID = getIDFromChildElement(dialogueLineElement, "path");
 
-                    dialogueLine = new PathDialogueLine(text, pathID);
+                    dialogueLine = new PathDialogueLine(ID, text, pathID);
                 } else if (dialogueLineElement.getAttribute("type").equals("quest")) {
                     int questID = getIDFromChildElement(dialogueLineElement, "quest");
-                    dialogueLine = new QuestDialogueLine(text, questTemplateIDMap.get(questID));
+                    dialogueLine = new QuestDialogueLine(ID, text, questTemplateIDMap.get(questID));
                 } else {
                     throw new IllegalArgumentException("Non-existent dialogue type");
                 }
@@ -476,14 +513,13 @@ public class GameLoader {
         return new QuestTemplate(questID, name, description, objectives);
     }
 
-    private Document getDocumentFromSaveFile() {
-        File saveFile = new File(filePath);
+    private Document getDocument(File file) {
         Document fileDoc;
 
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            fileDoc = builder.parse(saveFile);
+            fileDoc = builder.parse(file);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
             return null;

@@ -45,4 +45,11 @@ public class TallyObjective extends Objective {
 
     }
 
+    public int getTargetQuantity() {
+        return targetQuantity;
+    }
+
+    public int getCount() {
+        return count;
+    }
 }

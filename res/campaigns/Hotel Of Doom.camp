@@ -201,9 +201,10 @@
                     <description>"A run down room."</description>
                     <entities>
                         <entity id="5002" name="Angry Man">
-                            <level>1</level>
                             <description>He's very angry</description>
-                            <inventory>
+                            <level>1</level>
+                            <inventory equip="3401">
+                                <item id="3401" quantity="1" />
                                 <item id="3001" quantity="1" />
                             </inventory>
                             <dialogue id="6001" start="1" />

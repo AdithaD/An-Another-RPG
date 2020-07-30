@@ -1,5 +1,7 @@
 package com.ananotherrpg.level;
 
+import java.util.Collections;
+
 /**
  * Wraps the mutable state of the Campaign. This will be the data in the save
  * file + Player Data
@@ -18,5 +20,7 @@ public class CampaignState {
 
 	public Location getLocationByID(int ID) {
 		return locationManager.getLocation(ID);
-	}
+    }
+    
+
 }

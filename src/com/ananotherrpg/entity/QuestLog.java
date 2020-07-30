@@ -31,4 +31,8 @@ public class QuestLog {
     public List<Quest> getAcceptedQuests(){
         return Collections.unmodifiableList(acceptedQuests);
     }
+
+    public List<Quest> getCompletedQuests() {
+        return completedQuests;
+    }
 }

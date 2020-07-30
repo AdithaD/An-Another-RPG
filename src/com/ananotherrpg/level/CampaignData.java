@@ -26,6 +26,10 @@ public class CampaignData {
 
 	private Map<Integer, Item> items;
 	
+	public String getName() {
+		return name;
+	}
+
 	public String getIntroduction(){
 		return introduction;
 	}

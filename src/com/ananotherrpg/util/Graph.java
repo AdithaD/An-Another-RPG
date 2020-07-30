@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.ananotherrpg.level.Path;
 
 public class Graph<T, S extends Link<T>>{ 
     private Map<T, List<S>> adjacencyMap;
@@ -62,6 +65,16 @@ public class Graph<T, S extends Link<T>>{
 
 	public Set<T> getNodes() {
 		return new HashSet<T>(adjacencyMap.keySet());
+	}
+
+	public Set<S> getAllLinks() {
+        Set<S> links = new HashSet<S>();
+		for (Entry<T, List<S>> entry : adjacencyMap.entrySet()) {
+            for (S link : entry.getValue()) {
+                if (!links.contains(link)) links.add(link);
+            }
+        }
+        return links;
 	}
     
     // public List<T> getAccessibleNodes(T node){

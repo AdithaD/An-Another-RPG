@@ -6,6 +6,7 @@ import com.ananotherrpg.entity.dialogue.DialogueTraverser;
 import com.ananotherrpg.inventory.Item;
 import com.ananotherrpg.inventory.ItemStack;
 import com.ananotherrpg.level.Location;
+import com.ananotherrpg.level.Path;
 import com.ananotherrpg.level.QuestTemplate;
 
 /**
@@ -69,8 +70,8 @@ public class PlayerAvatar {
 		return questLog;
 	}
 
-	public void moveTo(Location location) {
-		currentLocation = location;
+	public void traverse(Path path) {
+		currentLocation = path.getOther(currentLocation);
 	}
 
 	public List<Integer> getKnownPathIDs() {

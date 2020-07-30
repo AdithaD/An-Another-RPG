@@ -36,4 +36,14 @@ public abstract class Objective implements IQueryable, IEventObserver{
         this.gameEvent = gameEvent;
     }
 
+	public int getTargetID() {
+		return targetID;
+    }
+    
+    public GameEvent getGameEvent() {
+        return gameEvent;
+    }
+
+    
+    
 }

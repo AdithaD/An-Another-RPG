@@ -4,8 +4,8 @@ public class PathDialogueLine extends DialogueLine{
 
     private int pathID;
 
-    public PathDialogueLine(String line, int pathID) {
-        super(line);
+    public PathDialogueLine(int localID, String line, int pathID) {
+        super(localID, line);
         this.pathID = pathID;
     }
 

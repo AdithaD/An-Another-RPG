@@ -1,13 +1,11 @@
 package com.ananotherrpg.level;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.util.Graph;
 
 public class LocationGraph {
@@ -43,14 +41,18 @@ public class LocationGraph {
 		}
 	}
     
-	public List<Location> getKnownAccessibleLocations(Location start, List<Integer> knownIntegersIDs){
+	public List<Location> getKnownAccessibleLocations(Location start, List<Integer> knownPathIDs){
         return locationGraph.getLinks(start).stream() //List<Path> -> Stream
-        .peek(e -> System.out.println("Before: " + e.getID()))
         .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
-        .peek(e -> System.out.println("MIddle: " + e.getID()))
-        .filter(e -> knownIntegersIDs.contains(e.getID())) // Filters stream to get only known paths
-        .peek(e -> System.out.println("End: " + e.getID()))
+        .filter(e -> knownPathIDs.contains(e.getID())) // Filters stream to get only known paths
         .map(e -> e.getOther(start)) // Gets the Location on the other side of the path
+        .collect(Collectors.toList()); // Stream -> List<Location>
+    }
+
+    public List<Path> getKnownAccessiblePaths(Location start, List<Integer> knownPathIDs){
+        return locationGraph.getLinks(start).stream() //List<Path> -> Stream
+        .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
+        .filter(e -> knownPathIDs.contains(e.getID())) // Filters stream to get only known paths
         .collect(Collectors.toList()); // Stream -> List<Location>
     }
 
@@ -91,7 +93,11 @@ public class LocationGraph {
         }
     }
     
-    public Set<Location> getAllLocationIDs(){
+    public Set<Location> getAllLocations(){
         return locationGraph.getNodes();
     }
+
+	public Set<Path> getAllPaths() {
+		return locationGraph.getAllLinks();
+	}
 }

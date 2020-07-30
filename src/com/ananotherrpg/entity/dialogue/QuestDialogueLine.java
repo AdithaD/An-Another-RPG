@@ -6,8 +6,8 @@ public class QuestDialogueLine extends DialogueLine {
 
 	private QuestTemplate questTemplate;
 	
-	public QuestDialogueLine(String dialogue, QuestTemplate questTemplate) {
-		super(dialogue);
+	public QuestDialogueLine(int localID, String dialogue, QuestTemplate questTemplate) {
+		super(localID, dialogue);
 		this.questTemplate = questTemplate;
 	}
 

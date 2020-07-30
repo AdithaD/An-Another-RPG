@@ -125,4 +125,8 @@ public class Entity implements IIdentifiable {
 	public DialogueTraverser startDialogue(Entity playerEntity) {
 		return dialogue.getTraverser(this, playerEntity);
 	}
+
+	public int getLevel() {
+		return level;
+	}
 }

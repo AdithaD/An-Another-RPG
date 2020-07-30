@@ -102,7 +102,7 @@ public class Attributes {
        
     }
 
-    private int getAttributePoints(Attribute attribute){
+    public int getAttributePoints(Attribute attribute){
         switch (attribute) {
             case STRENGTH:
                 return strength;
@@ -141,4 +141,5 @@ public class Attributes {
     public void addModifier(AttributeModifier attributeModifier){
         modifiers.add(attributeModifier);
     }
+
 }

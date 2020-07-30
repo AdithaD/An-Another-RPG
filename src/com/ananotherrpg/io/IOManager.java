@@ -139,9 +139,10 @@ public class IOManager {
 
     public static <T> Optional<T> queryUserInputAgainstCustomMap(List<T> data, Function<? super T, ? extends String> keyMapper,
             SelectionMethod selectionMethod, boolean canExit) {
+        List<String> stringData = data.stream().map(keyMapper).collect(Collectors.toList());
         Map<String, T> options = data.stream().collect(Collectors.toMap(keyMapper, Function.identity()));
 
-        Optional<String> optionalData = queryUserInputAgainstStrings(new ArrayList<String>(options.keySet()),
+        Optional<String> optionalData = queryUserInputAgainstStrings(stringData,
                 selectionMethod, canExit);
 
         if (optionalData.isPresent()) {
@@ -170,6 +171,15 @@ public class IOManager {
         return queryUserInputAgainstIQueryable(data, method, canExit);
     }
 
+    
+    public static <T> Optional<T> listAndQueryUserInputAgainstCustomMap(List<T> data, Function<? super T, ? extends String> keyMapper,
+    ListType type, SelectionMethod selectionMethod, boolean canExit) {
+        List<String> stringData = data.stream().map(keyMapper).collect(Collectors.toList());
+        listStrings(stringData, type);
+
+        return queryUserInputAgainstCustomMap(data, keyMapper, selectionMethod, canExit);
+
+    }
     public static void println(String text) {
         System.out.println(text);
     }
@@ -177,5 +187,10 @@ public class IOManager {
     public static void print(String text) {
         System.out.print(text);
     }
+
+	public static String getInput(String q) {
+        IOManager.println(q);
+		return s.nextLine().trim();
+	}
     
 }

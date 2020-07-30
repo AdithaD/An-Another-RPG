@@ -40,7 +40,7 @@ public class Location implements IIdentifiable {
 		return Collections.unmodifiableList(entities);
 	}
 
-	public Inventory getItemStacks() {
+	public Inventory getInventory() {
 		return itemsOnGround;
 	}
 

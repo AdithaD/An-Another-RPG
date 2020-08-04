@@ -83,7 +83,7 @@ public class IOManager {
 
                 int input = -1;
 
-                while ((!(input >= 1) && (input <= intToStringMap.length))) {
+                while (!((input >= 1) && (input <= intToStringMap.length))) {
                     String inputData = s.nextLine().trim();
                     if (inputData.equalsIgnoreCase("Exit") && canExit) {
                         return Optional.empty();
@@ -159,6 +159,27 @@ public class IOManager {
 
     }
 
+    public static <T> Optional<T> listAndQueryUserInputAgainstCustomMap(Map<String, T> customMap, ListType type,
+            SelectionMethod selectionMethod, boolean canExit) {
+                List<String> stringData = new ArrayList<String>(customMap.keySet());
+
+                listStrings(stringData, type);
+                Optional<String> optionalData = queryUserInputAgainstStrings(stringData,
+                        selectionMethod, canExit);
+
+                if (optionalData.isPresent()) {
+                    try {
+
+                        return Optional.of(customMap.get(optionalData.orElseThrow()));
+                    } catch (NoSuchElementException e) {
+                        println("Catastrophic error in user query");
+                        return Optional.empty();
+                    }
+                } else {
+                    return Optional.empty();
+                }
+    }
+
     public static Optional<String> listAndQueryUserInputAgainstStrings(List<String> data, ListType type,
             SelectionMethod method, boolean canExit) {
         listStrings(data, type);
@@ -180,6 +201,7 @@ public class IOManager {
         return queryUserInputAgainstCustomMap(data, keyMapper, selectionMethod, canExit);
 
     }
+
     public static void println(String text) {
         System.out.println(text);
     }

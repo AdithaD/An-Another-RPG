@@ -15,6 +15,7 @@ public class Attributes {
 
     // Strength -> damage scaling
     private int strength;
+	private static final int BASE_UNARMED_DAMAGE = 2;
     // Agility -> Evasion, Critical Hit Chance Bonus,
     private int agility;
     private static double BASE_EVASION = 0.05;
@@ -69,11 +70,21 @@ public class Attributes {
     }
 
     /**
+     * Calculates the critical hit damage multiplier that should be addivitively combined with
+     * the weapon's base critical hit damage multiplier based on Strength
+     * 
+     * @return A percentage representing bonus crit damage
+     */
+    public double calculateCritMultiBonus() {
+        return (strength * 0.02) + BASE_CRIT_CHANCE;
+    }
+
+    /**
      * Calculates the chance to evade an attack based on Agility
      * 
      * @return The chance to evade an attack
      */
-    public double calculateBaseEvasion() {
+    public double calculateEvasion() {
         return (agility * 0.01) + BASE_EVASION;
 
     }
@@ -141,5 +152,14 @@ public class Attributes {
     public void addModifier(AttributeModifier attributeModifier){
         modifiers.add(attributeModifier);
     }
+
+    public double calculateInitiative(){
+        return Math.log(agility);
+    }
+
+
+	public int calculateUnarmedDamage() {
+		return (int) Math.floor((BASE_UNARMED_DAMAGE + strength) * calculateBaseDamageScaling());
+	}
 
 }

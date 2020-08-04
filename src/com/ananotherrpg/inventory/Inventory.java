@@ -107,9 +107,13 @@ public class Inventory {
 
 		if(items.containsKey(item)) {
 			item.use(entity);
-			removeFromInventory(item, 1);
+			if(item.shouldConsumeOnUse()) removeFromInventory(item, 1);
 		}else{
 			throw new IllegalArgumentException("Item to be used not in inventory");
 		}
+	}
+
+	public boolean hasEquippedWeapon() {
+		return equippedWeapon != null;
 	}
 }

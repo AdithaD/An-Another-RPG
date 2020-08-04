@@ -1,5 +1,8 @@
 package com.ananotherrpg.entity;
 
+import java.util.Optional;
+import java.util.Random;
+
 import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueTraverser;
@@ -20,6 +23,8 @@ public class Entity implements IIdentifiable {
 
 	private Attributes attributes;
 	
+	private int hp;
+
 	private int level;
 	private int xp;
 	private boolean isDead;
@@ -37,7 +42,9 @@ public class Entity implements IIdentifiable {
 
 		this.attributes = attributes;
 		this.level = level;
+
 		this.xp = 0;
+		hp = attributes.calculateMaxHp();
 
 		this.inventory = inventory;
 
@@ -46,21 +53,11 @@ public class Entity implements IIdentifiable {
 		this.isDead = isDead;
 	}
 
-	public Entity(int entityID, String name, String description, Attributes attributes, int level, int xp,
+	public Entity(int entityID, String name, String description, Attributes attributes, int level, int xp, int hp,
 			Inventory inventory, Dialogue dialogue, boolean isDead) {
-		this.entityID = entityID;
-		this.name = name;
-		this.description = description;
-
-		this.attributes = attributes;
-		this.level = level;
+		this(entityID, name, description, attributes, level, inventory, dialogue, isDead);
 		this.xp = xp;
-
-		this.inventory = inventory;
-
-		this.dialogue = dialogue;
-
-		this.isDead = isDead;
+		this.hp = hp;
 	}
 
 	public void equipWeapon(Weapon weapon){
@@ -74,6 +71,26 @@ public class Entity implements IIdentifiable {
 
 	public void use(Item item) {
 		inventory.use(item, this);
+	}
+
+	public int calculateDamage(){
+		int damage = 0;
+		if(inventory.hasEquippedWeapon()){
+			int weaponDamage = inventory.getEquippedWeapon()
+			.calculateDamage(attributes.calculateCritChanceBonus(), attributes.calculateCritMultiBonus());
+	
+			 damage =  (int) Math.round(weaponDamage * attributes.calculateBaseDamageScaling());
+			
+		}else{
+			damage = attributes.calculateUnarmedDamage();
+		}
+
+		
+		return damage;
+	}
+
+	public void die() {
+		isDead = true;
 	}
 
 	@Override
@@ -95,8 +112,6 @@ public class Entity implements IIdentifiable {
 	public Dialogue getDialogue(){
 		return dialogue;
 	}
-
-
 	@Override
 	public String getListForm() {
 		return name;
@@ -129,4 +144,8 @@ public class Entity implements IIdentifiable {
 	public int getLevel() {
 		return level;
 	}
+
+	
+
+	
 }

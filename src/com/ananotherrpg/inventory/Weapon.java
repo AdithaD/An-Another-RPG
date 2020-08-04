@@ -10,28 +10,28 @@ public class Weapon extends Item {
 		super(itemID, name, description, weight, sellPrice, false);
 		this.damage = damage;
 		this.critChance = critChance;
-		this.critDamgeMultiplier = critDamageMultiplier;
+		this.critDmgMulti = critDamageMultiplier;
 	}
 
 	private int damage;
 
 	private double critChance;
-	private double critDamgeMultiplier;
+	private double critDmgMulti;
 	
 	public int calculateDamage(){
 		Random r = new Random();
 		int damage = this.damage;
 		if(r.nextDouble() >= critChance){
-			damage = (int) Math.round(damage * (1 + critDamgeMultiplier));
+			damage = (int) Math.round(damage * (1 + critDmgMulti));
 		}
 		return damage;
 	}
 
-	public int calculateDamage(int critChanceBonus, int critMultiplierBonus) {
+	public int calculateDamage(double critChanceBonus, double critDmgMultiBonus) {
 		Random r = new Random();
 		int damage = this.damage;
 		if(r.nextDouble() >= critChance + critChanceBonus){
-			damage = (int) Math.round(damage * (1 + critDamgeMultiplier + critMultiplierBonus));
+			damage = (int) Math.round(damage * (1 + critDmgMulti + critDmgMultiBonus));
 		}
 		return damage;
 	}

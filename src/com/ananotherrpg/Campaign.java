@@ -7,13 +7,13 @@ import java.util.Optional;
 
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.PlayerAvatar;
+import com.ananotherrpg.entity.combat.Combat;
 import com.ananotherrpg.inventory.ItemStack;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.CampaignData;
 import com.ananotherrpg.level.CampaignState;
-import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.Path;
 import com.ananotherrpg.level.Quest;
 
@@ -23,7 +23,7 @@ import com.ananotherrpg.level.Quest;
 public class Campaign {
     
     private final ArrayList<String> options = new ArrayList<String>(Arrays.asList(new String[] { "Look around",
-    "Move to", "Examine", "Talk", "View Quests", "View Inventory", "Pick Up", "Help", "Save" }));
+    "Move to", "Examine", "Talk", "View Quests", "View Inventory", "Pick Up", "Help", "Save", "Fight"}));
 
 	private CampaignData campaignData;
 	private CampaignState campaignState;
@@ -68,6 +68,9 @@ public class Campaign {
 					case "Examine":
 						examine();
 						break;
+					case "Fight":
+						fight();
+						break;
 					case "Save":
 						save();
 						break;
@@ -83,11 +86,42 @@ public class Campaign {
 
     }
     
-    private void save() {
+    private void fight() {
+		IOManager.println("Who do you want to fight?");
+		Optional<Entity> opEntity = IOManager.listAndQueryUserInputAgainstIQueryables(player.getCurrentLocation().getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED, true);
+
+		if(opEntity.isPresent()){
+			Entity target = opEntity.get();
+			boolean confirmed = IOManager.askYesOrNoQuestion("Are you sure you want to fight " + target.getName() + " ?");
+
+			if (confirmed) {
+				IOManager.println("Enganging combat with " + target.getName());
+				Combat combat = new Combat(player.getEntity(), target);
+				combat.start();
+
+				if(player.getEntity().isDead()) gameOver();
+				else{
+					
+				}
+
+			} else {
+				IOManager.println("Pacifism entices you more...");
+			}
+		}else{
+
+		}
+	}
+
+	private void gameOver() {
+		IOManager.println("Game Over!");
+		shouldExitCampaign = true;
+	}
+
+	private void save() {
 		Game.saveGame(campaignState, player);
 	}
 
-	public void talk() {
+	private void talk() {
 		if (!player.getCurrentLocation().hasEntities()) {
 			IOManager.println("There is no one to talk to");
 		} else {
@@ -105,7 +139,7 @@ public class Campaign {
 		}
 	}
 
-	public void moveTo() {
+	private void moveTo() {
 		List<Path> accessibleLocations = campaignState.getLocationManager().getAccessiblePathsFrom(player.getCurrentLocation(), player.getKnownPathIDs());
 		if (accessibleLocations.isEmpty()) {
 			IOManager.println("There is no where to go to!");
@@ -125,13 +159,13 @@ public class Campaign {
 
 	}
 
-	public void lookAround() {
+	private void lookAround() {
 		IOManager.println("You take a quick whirl around and you see: ");
 		IOManager.listIQueryables(player.getCurrentLocation().getIIdentifiables(), ListType.BULLET);
 
 	}
 
-	public void examine() {
+	private void examine() {
 		List<IIdentifiable> identifiables = player.getCurrentLocation().getIIdentifiables();
 
 		IOManager.println("What would you like to examine: (Type its name)");
@@ -145,7 +179,7 @@ public class Campaign {
 		}
 	}
 
-	public void pickUp() {
+	private void pickUp() {
 		Optional<ItemStack> opItem = IOManager.listAndQueryUserInputAgainstIQueryables(
 				player.getCurrentLocation().getInventory().getItems(), ListType.NUMBERED, SelectionMethod.NUMBERED, true);
 		if (opItem.isPresent()) {
@@ -156,7 +190,7 @@ public class Campaign {
 		}
 	}
 
-	public void viewInventory() {
+	private void viewInventory() {
 		IOManager.println("Choose an item to inquire about or type exit to go back");
 		Optional<ItemStack> opItemStack = IOManager.listAndQueryUserInputAgainstIQueryables(player.getEntity().getInventory().getItems(),ListType.NUMBERED, SelectionMethod.NUMBERED, true);
 

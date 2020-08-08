@@ -17,11 +17,9 @@ import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.CampaignState;
-import com.ananotherrpg.util.GameSaver;
 
 /**
- * The Game class is reponsible for loading or creating new Campaigns, and
- * providing them to Player object to play.
+ * The Game class is reponsible for loading or creating new Campaigns
  */
 public class Game {
 
@@ -32,12 +30,6 @@ public class Game {
 	private final static String SAVE_FILE_EXTENSION = ".save";
 
 	private Campaign currentCampaign;
-
-	private enum GameState {
-		MENU, CAMPAIGN
-	}
-
-	private GameState gameState = GameState.MENU;
 
 	private static Boolean shouldExit = false;
 
@@ -131,7 +123,6 @@ public class Game {
 	}
 
 	private void start() {
-		gameState = GameState.CAMPAIGN;
 
 		currentCampaign.play();
 	}

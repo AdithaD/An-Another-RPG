@@ -9,9 +9,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.ananotherrpg.level.Path;
-
+/**
+ * An implementation graph data structure.
+ * @param <T> The "Node" type
+ * @param <S> The "Edge" type, must extend Link<T>
+ */
 public class Graph<T, S extends Link<T>>{ 
     private Map<T, List<S>> adjacencyMap;
 

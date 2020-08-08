@@ -1,11 +1,12 @@
-package com.ananotherrpg.inventory;
+package com.ananotherrpg.entity.inventory;
+
 
 import com.ananotherrpg.entity.AttributeModifier;
 import com.ananotherrpg.entity.Entity;
 
 public class Potion extends Item{
-    public Potion(int itemID, String name, String description, int weight, int sellPrice, AttributeModifier attributeModifier){
-        super(itemID, name, description, weight, sellPrice, true);
+    public Potion(int itemID, String name, String description, String interactText, int weight, int sellPrice, AttributeModifier attributeModifier){
+        super(itemID, name, description, interactText, weight, sellPrice, true);
         this.attributeModifier = attributeModifier;
     }
 

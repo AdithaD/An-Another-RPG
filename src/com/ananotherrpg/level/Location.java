@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 
 import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.inventory.Inventory;
-import com.ananotherrpg.inventory.ItemStack;
-
+import com.ananotherrpg.entity.inventory.Inventory;
+import com.ananotherrpg.entity.inventory.ItemStack;
+/**
+ * A place in the world where entities, including the player, can be.
+ */
 public class Location implements IIdentifiable {
 
 	private final int locationID;
@@ -29,6 +31,14 @@ public class Location implements IIdentifiable {
 		this.description = description;
 		this.entities = entities;
 		this.itemsOnGround = itemsOnGround;
+	}
+
+	public boolean hasEntities() {
+		return !entities.isEmpty();
+	}
+
+	public void removeItem(ItemStack itemStack) {
+		itemsOnGround.removeFromInventory(itemStack);
 	}
 	
 	@Override
@@ -56,21 +66,12 @@ public class Location implements IIdentifiable {
 
 	@Override
 	public String getDetailForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Location: " + name + " \\n " + description;
 	}
 
 	@Override
 	public int getID() {
 		return locationID;
-	}
-
-	public boolean hasEntities() {
-		return !entities.isEmpty();
-	}
-
-	public void removeItem(ItemStack itemStack) {
-		itemsOnGround.removeFromInventory(itemStack);
 	}
 
 	public List<IIdentifiable> getIIdentifiables() {

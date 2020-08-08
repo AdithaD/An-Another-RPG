@@ -2,20 +2,16 @@ package com.ananotherrpg.entity;
 
 import java.util.List;
 
-import com.ananotherrpg.entity.dialogue.DialogueTraverser;
-import com.ananotherrpg.inventory.Item;
-import com.ananotherrpg.inventory.ItemStack;
+import com.ananotherrpg.entity.inventory.Item;
+import com.ananotherrpg.entity.inventory.ItemStack;
 import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.Path;
-import com.ananotherrpg.level.QuestTemplate;
+import com.ananotherrpg.level.quest.Quest;
 
 /**
- * The Player class is responsible for all data related to a player in a
- * campaign
+ * A representation of the player in the world, its interactions with the world around it and the player's knowledge.
  */
 public class PlayerAvatar {
-
-	private boolean shouldExitCampaign = false;
 
 	private Entity playerEntity;
 
@@ -35,46 +31,41 @@ public class PlayerAvatar {
 		this.knownPaths = knownPaths;
 	}
 
-	public Location getCurrentLocation() {
-		return currentLocation;
-	}
-
-	public void talkWith(Entity entity) {
-		DialogueTraverser traverser = entity.startDialogue(playerEntity);
-
-		traverser.start();
-
-		for (QuestTemplate template : traverser.getQuestTemplates()) {
-			questLog.addQuest(template.instantiateTemplate());
-		}
-
-		for (Integer pathId : traverser.getNewPathIDs()){
-			if(!knownPaths.contains(pathId)) knownPaths.add(pathId);
-		}
-	}
-
+	/**
+	 * Takes an item from the world and gives it to the player.
+	 */
 	public void pickUp(ItemStack itemStack) {
 		playerEntity.getInventory().addToInventory(itemStack);
 		currentLocation.removeItem(itemStack);
-	}
-
-	public void learnPath(int pathID){
-		knownPaths.add(pathID);
-	}
-
-	public void use(Item item){
-		playerEntity.use(item);
-	}
-	
-	public QuestLog getQuestLog() {
-		return questLog;
 	}
 
 	public void traverse(Path path) {
 		currentLocation = path.getOther(currentLocation);
 	}
 
+	public void learnQuest(Quest newQuest) {
+		questLog.addQuest(newQuest);
+	}
+
+	public void learnPath(int pathID) {
+		knownPaths.add(pathID);
+	}
+
+	public void use(Item item) {
+		playerEntity.use(item);
+	}
+
+	public QuestLog getQuestLog() {
+		return questLog;
+	}
+
+	public Location getCurrentLocation() {
+		return currentLocation;
+	}
+
 	public List<Integer> getKnownPathIDs() {
 		return knownPaths;
 	}
+
+
 }

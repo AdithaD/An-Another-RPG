@@ -3,17 +3,19 @@ package com.ananotherrpg.level;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
 import com.ananotherrpg.entity.Attributes;
 import com.ananotherrpg.entity.Attributes.Attribute;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueGraph;
-import com.ananotherrpg.inventory.Inventory;
-import com.ananotherrpg.inventory.Item;
-import com.ananotherrpg.inventory.Weapon;
+import com.ananotherrpg.entity.inventory.Inventory;
+import com.ananotherrpg.entity.inventory.Item;
+import com.ananotherrpg.entity.inventory.Weapon;
+import com.ananotherrpg.level.quest.Loot;
 
+/**
+ * A stateless form of an entity, which needs to be instantiated to a Entity before usage in the world.
+ */
 public class EntityTemplate{
     private final int entityID;
 
@@ -25,8 +27,15 @@ public class EntityTemplate{
 
     private int dialogueID;
 
-    private EnumMap<Attribute, Integer> attributeDistribution; //each attribute has a value of 1 to 10
+    //each attribute has a value of 1 to 10 to define its weighting of attribute points
+    private EnumMap<Attribute, Integer> attributeDistribution; 
 
+    /**
+     * Generates a set of <code>Attributes</code> from the <code>attributeDistribution</code> at a specific level.
+     * <p> Higher level means more attribute points to distribute.
+     * @param level The level to instantiate the creature at. 
+     * @return A set of <code>Attributes</code> suitable for the level specified.
+     */
     private Attributes generateScaledAttributes(int level){
         
         int noOfAttributePoints  = (Attribute.values().length * 2) + 2 * level;
@@ -40,14 +49,18 @@ public class EntityTemplate{
         return new Attributes(attributeValues);
     }
 
+    /**
+     * Generates an inventory from the specified loot
+     * @param items A map of itemIDs to Item objects
+     * @return A inventory containing itemStacks generated from Loot.
+     */
     private Inventory generateInventory(Map<Integer, Item> items) {
         Inventory inv = new Inventory();
 
         Weapon equippedWeapon = (Weapon) items.get(equippedWeaponID);
 
-        Random r = new Random();
         for (Loot loot : possibleLoot) {
-            inv.addToInventory(items.get(loot.getItemID()), r.nextInt(loot.getMaximum()-loot.getMinimum())+loot.getMinimum());
+            inv.addToInventory(loot.generateLootStack(items));
         }
 
         if(equippedWeapon != null) inv.equipWeapon(equippedWeapon);

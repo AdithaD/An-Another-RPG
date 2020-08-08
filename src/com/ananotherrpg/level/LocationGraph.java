@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import com.ananotherrpg.util.Graph;
 
+/**
+ * A queryable representation of <code>Location</code>s in the world and <code>Path</code>s between them
+ */
 public class LocationGraph {
 
     private Graph<Location, Path> locationGraph;    
@@ -41,7 +44,14 @@ public class LocationGraph {
 		}
 	}
     
-	public List<Location> getKnownAccessibleLocations(Location start, List<Integer> knownPathIDs){
+    /**
+     * Returns a List of <code>Location</code>s that are connected by a known <code>Path</code> (by the player) to the specified <code>Location</code>
+     * and are traversible.
+     * @param start The location to find traversible locations from
+     * @param knownPathIDs The IDs of the paths that the player knows
+     * @return A List of known traversible locations
+     */
+	public List<Location> getKnownTraversibleLocations(Location start, List<Integer> knownPathIDs){
         return locationGraph.getLinks(start).stream() //List<Path> -> Stream
         .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
         .filter(e -> knownPathIDs.contains(e.getID())) // Filters stream to get only known paths
@@ -49,14 +59,29 @@ public class LocationGraph {
         .collect(Collectors.toList()); // Stream -> List<Location>
     }
 
-    public List<Path> getKnownAccessiblePaths(Location start, List<Integer> knownPathIDs){
+    /**
+     * Returns a List of <code>Paths</code>s that are known the the player stemming from the specified node and are traversible.
+     * @param start The location to find traversible locations from
+     * @param knownPathIDs The IDs of the paths that the player knows
+     * @return A List of known <code>Path</code>s stemming from the specified node.
+     */
+    public List<Path> getKnownTraversiblePaths(Location start, List<Integer> knownPathIDs){
         return locationGraph.getLinks(start).stream() //List<Path> -> Stream
         .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
         .filter(e -> knownPathIDs.contains(e.getID())) // Filters stream to get only known paths
         .collect(Collectors.toList()); // Stream -> List<Location>
     }
 
-    public List<Location> getAccessibleLocations(Location start){
+
+     
+    /**
+     * Returns a List of <code>Location</code>s that are connected by <code>Path</code> to the specified <code>Location</code> and are traversible
+     * 
+     * @param start The location to find traversible locations from
+     * @param knownPathIDs The IDs of the paths that the player knows
+     * @return A List of known traversible locations
+     */
+    public List<Location> getTraversibleLocations(Location start){
         return locationGraph.getLinks(start).stream() //List<Path> -> Stream
         .filter(e -> e.isTraversible()) // Filters stream to get only traversible paths
         .map(e -> e.getOther(start)) // Gets the Location on the other side of the path
@@ -71,10 +96,6 @@ public class LocationGraph {
     public void addPath(Path path){
         locationGraph.addLink(path);
         pathList.put(path.getID(), path);
-    }
-
-    public void setPathTraversability(int pathID, boolean status){
-        pathList.get(pathID).setTraversible(status);
     }
 
     public boolean containsLocation(Location location){

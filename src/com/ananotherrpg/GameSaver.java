@@ -1,4 +1,4 @@
-package com.ananotherrpg.util;
+package com.ananotherrpg;
 
 import java.io.File;
 
@@ -11,22 +11,23 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.entity.Attributes.Attribute;
 import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.entity.PlayerAvatar;
-import com.ananotherrpg.inventory.ItemStack;
+import com.ananotherrpg.entity.inventory.ItemStack;
 import com.ananotherrpg.level.CampaignState;
 import com.ananotherrpg.level.Location;
-import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.Path;
-import com.ananotherrpg.level.Quest;
-import com.ananotherrpg.level.TallyObjective;
+import com.ananotherrpg.level.quest.Objective;
+import com.ananotherrpg.level.quest.Quest;
+import com.ananotherrpg.level.quest.TallyObjective;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+/**
+ * Saves the game
+ */
 public class GameSaver {
 
     private File file;
@@ -52,7 +53,7 @@ public class GameSaver {
 
                 Element e_locations = document.createElement("locations");
                 e_locationGraph.appendChild(e_locations);
-                for (Location location : state.getLocationManager().getAllLocations()) {
+                for (Location location : state.getLocationGraph().getAllLocations()) {
                     Element e_location = generateIIdentifiableElement(document, "location", location);
 
                     for (Entity entity : location.getPermanentEntities()) {
@@ -76,7 +77,7 @@ public class GameSaver {
                 Element e_paths = document.createElement("paths");
                 e_locationGraph.appendChild(e_paths);
 
-                for (Path path : state.getLocationManager().getAllPaths()) {
+                for (Path path : state.getLocationGraph().getAllPaths()) {
                     Element e_path = generateIIdentifiableElement(document, "path", path);
                     e_paths.appendChild(e_path);
 

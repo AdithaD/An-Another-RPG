@@ -7,11 +7,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueGraph;
-import com.ananotherrpg.inventory.Item;
+import com.ananotherrpg.entity.inventory.Item;
+import com.ananotherrpg.level.quest.Quest;
+import com.ananotherrpg.level.quest.QuestTemplate;
 /**
- * Stores all the static data related to world around the player
+ * Stores all the stateless data related to world around the player
  */
 public class CampaignData {
 
@@ -25,30 +26,6 @@ public class CampaignData {
 	private Map<Integer, QuestTemplate> questTemplates;
 
 	private Map<Integer, Item> items;
-	
-	public String getName() {
-		return name;
-	}
-
-	public String getIntroduction(){
-		return introduction;
-	}
-
-	public Quest instantiateQuestByID(int ID){
-		if(!questTemplates.containsKey(ID)) throw new IllegalArgumentException("Quest ID doesn't exist");
-
-		return questTemplates.get(ID).instantiateTemplate();
-	}
-
-	public Entity instantiateEntityByID(int ID, int level){
-		if(!entityTemplates.containsKey(ID)) throw new IllegalArgumentException("Entity ID doesn't exist");
-
-		return entityTemplates.get(ID).instantiateTemplate(level, items, Collections.unmodifiableMap(dialogueGraphs));
-	}
-
-	public Item getItemByID(int ID){
-		return items.get(ID);
-	}
 
 	public CampaignData(String name, String introduction, List<EntityTemplate> entityTemplates, List<DialogueGraph> dialogueGraphs,
 			List<QuestTemplate> questTemplates, List<Item> campaignItems) {
@@ -62,6 +39,30 @@ public class CampaignData {
 		this.items = campaignItems.stream().collect(Collectors.toMap(Item::getID, Function.identity()));
 
 		//this.campaignState = new CampaignState(location);
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public String getIntroduction(){
+		return introduction;
+	}
+
+	public Quest instantiateQuestByID(int questID){
+		if(!questTemplates.containsKey(questID)) throw new IllegalArgumentException("Quest ID doesn't exist");
+
+		return questTemplates.get(questID).instantiateTemplate();
+	}
+
+	public Entity instantiateEntityByID(int entityID, int level){
+		if(!entityTemplates.containsKey(entityID)) throw new IllegalArgumentException("Entity ID doesn't exist");
+
+		return entityTemplates.get(entityID).instantiateTemplate(level, items, Collections.unmodifiableMap(dialogueGraphs));
+	}
+
+	public Item getItemByID(int ID){
+		return items.get(ID);
 	}
 
 	public QuestTemplate getQuestTemplate(int questID) {

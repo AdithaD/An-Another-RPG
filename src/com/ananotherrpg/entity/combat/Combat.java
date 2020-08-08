@@ -14,11 +14,17 @@ import java.util.stream.Collectors;
 
 import com.ananotherrpg.entity.Attributes.Attribute;
 import com.ananotherrpg.entity.Entity;
-import com.ananotherrpg.inventory.ItemStack;
+import com.ananotherrpg.entity.inventory.ItemStack;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 
+
+/**
+ * A representation of a combat in the game world. 
+ * 
+ * It manages the turn order and user choice in combat. 
+ */
 public class Combat {
 
     private boolean finished = false;
@@ -38,6 +44,11 @@ public class Combat {
     private Combatant player;
     private Set<Combatant> opponents;
 
+    /**
+     *  The class constuctor
+     * 
+     *  <p> Instanstiates a combat instance between a player and a single target
+     */
     public Combat(Entity player, Entity target) {
         opponents = new HashSet<Combatant>();
 
@@ -58,6 +69,16 @@ public class Combat {
         };
     };
 
+    /**
+     * Starts the combat loop
+     * 
+     * <p> The loop will repeat until:
+     * <ul>
+     *      <li> All opponents are dead
+     *      <li> The player is dead
+     *      <li> The player has fleed
+     * 
+     */
     public void start() {
         List<Combatant> combatants = new ArrayList<Combatant>();
         combatants.addAll(opponents);
@@ -77,21 +98,28 @@ public class Combat {
                 }
 
                 if (opponents.stream().allMatch(e -> e.isDead()) || player.isDead()) {
-                    finished = true;
+                    endCombat();
                 }
             }
         }
     }
 
+    /**
+     * Conducts a turn for the specific non-player combatant
+     * @param combatant A non-player combatant
+     */
     private void doOpponentTurn(Combatant combatant) {
         combatant.attack(player);
     }
 
+    /**
+     * Conducts the player's turn with input from the user
+     */
     private void doPlayerTurn() {
         IOManager.println("What will you do? ");
 
         boolean actionComplete = false;
-        while (!actionComplete) {
+        while (!actionComplete) { // Loops until an action successful completes.
             Optional<String> actionName = IOManager.listAndQueryUserInputAgainstStrings(
                     new ArrayList<String>(actions.keySet()), ListType.ONE_LINE, SelectionMethod.TEXT, false);
 
@@ -122,6 +150,7 @@ public class Combat {
                     }
                     break;
                 case FLEE:
+                    // The player can only flee if they have an agility that is 5 or more than every enemy's agility.
                     if (opponents.stream()
                             .anyMatch(e -> player.getEntity().getAttributes().getAttributePoints(Attribute.AGILITY)
                                     - e.getEntity().getAttributes().getAttributePoints(Attribute.AGILITY) < 5)) {
@@ -141,9 +170,14 @@ public class Combat {
     }
 
     private void endCombat() {
+        IOManager.println("The battle draws to a close.");
         finished = true;
     }
 
+    /**
+     * Queries the user to select an opponent
+     * @return The chosen opponent
+     */
     private Optional<Combatant> queryOpponents() {
         Map<String, Combatant> nameCombatantMap = opponents.stream()
                 .collect(Collectors.toMap(e -> e.getEntity().getName(), Function.identity()));

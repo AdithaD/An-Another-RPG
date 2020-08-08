@@ -2,7 +2,6 @@ package com.ananotherrpg;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -27,23 +26,23 @@ import com.ananotherrpg.entity.dialogue.DialogueLine;
 import com.ananotherrpg.entity.dialogue.PathDialogueLine;
 import com.ananotherrpg.entity.dialogue.QuestDialogueLine;
 import com.ananotherrpg.entity.dialogue.Response;
+import com.ananotherrpg.entity.inventory.Inventory;
+import com.ananotherrpg.entity.inventory.Item;
+import com.ananotherrpg.entity.inventory.Potion;
+import com.ananotherrpg.entity.inventory.Weapon;
 import com.ananotherrpg.event.EventDispatcher.GameEvent;
-import com.ananotherrpg.inventory.Inventory;
-import com.ananotherrpg.inventory.Item;
-import com.ananotherrpg.inventory.Potion;
-import com.ananotherrpg.inventory.Weapon;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.level.CampaignData;
 import com.ananotherrpg.level.CampaignState;
 import com.ananotherrpg.level.EntityTemplate;
 import com.ananotherrpg.level.Location;
 import com.ananotherrpg.level.LocationGraph;
-import com.ananotherrpg.level.Loot;
-import com.ananotherrpg.level.Objective;
 import com.ananotherrpg.level.Path;
-import com.ananotherrpg.level.Quest;
-import com.ananotherrpg.level.QuestTemplate;
-import com.ananotherrpg.level.TallyObjective;
+import com.ananotherrpg.level.quest.Loot;
+import com.ananotherrpg.level.quest.Objective;
+import com.ananotherrpg.level.quest.Quest;
+import com.ananotherrpg.level.quest.QuestTemplate;
+import com.ananotherrpg.level.quest.TallyObjective;
 import com.ananotherrpg.util.DirectedGraph;
 
 import org.w3c.dom.Document;
@@ -51,7 +50,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
+/**
+ * Loads the game
+ */
 public class GameLoader {
 
     private File campaignFile;
@@ -66,6 +67,10 @@ public class GameLoader {
         this.saveFile = saveFile;
 	}
 
+    /**
+     * Loads the game from the campaignFile, and saveFile if specified.
+     * @return A loaded <code>Game</code> to play
+     */
 	public Game loadGame() {
         Document cfDoc = getDocument(campaignFile);
         cfDoc.getDocumentElement().normalize();
@@ -166,7 +171,7 @@ public class GameLoader {
             Element e_campaignState = (Element) docElement.getElementsByTagName("campaignState").item(0);
 
             // Locations
-            Element locationsElement = (Element) docElement.getElementsByTagName("locationGraph").item(0);
+            Element locationsElement = (Element) e_campaignState.getElementsByTagName("locationGraph").item(0);
             LocationGraph locationGraph = generateLocationGraph(locationsElement, campaignData);
 
             campaignState = new CampaignState(locationGraph);
@@ -458,24 +463,26 @@ public class GameLoader {
         int weight = getIntValue(itemElement, "weight");
         int sellPrice = getIntValue(itemElement, "sellPrice");
 
+        String interactText = getTextValue(itemElement, "interactText");
+ 
         if (type.equals("")) {
 
             boolean consumeOnUse = Boolean.parseBoolean(getTextValue(itemElement, "consumeOnUse"));
 
-            return new Item(itemID, name, description, weight, sellPrice, consumeOnUse);
+            return new Item(itemID, name, description, interactText, weight, sellPrice, consumeOnUse);
         } else if (type.equals("weapon")) {
             int damage = getIntValue(itemElement, "damage");
             double critChance = getDoubleValue(itemElement, "critChance");
             double critDamageMultiplier = getDoubleValue(itemElement, "critDamageMultiplier");
 
-            return new Weapon(itemID, name, description, weight, sellPrice, damage, critChance, critDamageMultiplier);
+            return new Weapon(itemID, name, description, interactText, weight, sellPrice, damage, critChance, critDamageMultiplier);
         } else if (type.equals("potion")) {
             int modifier = getIntValue(itemElement, "modifier");
             int duration = getIntValue(itemElement, "duration");
 
             Attribute attribute = Attribute.valueOf(getAttributeValue(itemElement, "attributeModifier", "attribute"));
 
-            return new Potion(itemID, name, description, weight, sellPrice,
+            return new Potion(itemID, name, description, interactText, weight, sellPrice, 
                     new AttributeModifier(attribute, modifier, duration));
         } else {
             throw new IllegalArgumentException("ITEM TYPE NOT FOUND");
@@ -542,17 +549,6 @@ public class GameLoader {
             int itemID = getIntValue(rootElement, "itemID");
             int minimum = getIntValue(rootElement, "minimum");
             int maximum = getIntValue(rootElement, "maximum");
-
-            // Element lootElement = (Element) lootNodes.item(i);
-
-            // Node itemIdNode = lootElement.getFirstChild();
-            // itemID = Integer.parseInt(lootElement.getTextContent());
-
-            // Node minimumNode = itemIdNode.getNextSibling();
-            // minimum = Integer.parseInt(minimumNode.getTextContent());
-
-            // Node maximumNode = itemIdNode.getNextSibling();
-            // maximum = Integer.parseInt(maximumNode.getTextContent());
 
             possibleLoot.add(new Loot(itemID, minimum, maximum));
         }

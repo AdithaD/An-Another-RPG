@@ -1,4 +1,4 @@
-package com.ananotherrpg.level;
+package com.ananotherrpg.level.quest;
 
 import com.ananotherrpg.event.EventData;
 import com.ananotherrpg.event.EventDispatcher.GameEvent;
@@ -28,13 +28,8 @@ public class TallyObjective extends Objective {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public String getListForm() {
-        return name + ": (" + count + "/" +  targetQuantity + ") killed!";
+        return getName() + ": (" + count + "/" +  targetQuantity + ") killed!";
     }
 
     @Override

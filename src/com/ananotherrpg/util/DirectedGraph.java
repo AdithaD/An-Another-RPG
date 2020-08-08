@@ -5,7 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * An implementation of a directed graph data structure.
+ * @param <T> The "node" type
+ * @param <S> The "edge" type, must implement IDirectedLink
+ */
 public class DirectedGraph<T, S extends IDirectedLink<T>> {
     private Map<T, List<S>> incidenceMap;
     

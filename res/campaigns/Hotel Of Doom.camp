@@ -57,12 +57,14 @@
         <items>
             <item id="3001" name="Ball">
                 <description>A bouncy red ball.</description>
+                <interactText>It's delightful to hold, but it doesn't do much.</interactText>
                 <weight>1</weight>
                 <sellPrice>20</sellPrice>
                 <consumeOnUse>false</consumeOnUse>
             </item>
             <item id="3002" name="Key">
                 <description>A roughed-up gold key</description>
+                <interactText>It really needs a door to be useful...</interactText>
                 <weight>1</weight>
                 <sellPrice>0</sellPrice>
                 <consumeOnUse>false</consumeOnUse>
@@ -70,6 +72,7 @@
             <item id="3401" name="Feral Claws" type="weapon">
                 <description>These will definitely give your target rabies</description>
                 <weight>5</weight>
+                <interactText>You put on the claws in disgust.</interactText>
                 <sellPrice>3</sellPrice>
                 <damage>5</damage>
                 <critChance>0.2</critChance>
@@ -77,6 +80,7 @@
             </item>
             <item id="3402" name="Surfboard" type="weapon">
                 <description>Don't underestimate its effectiveness</description>
+                <interactText>You wield the surfboard aggressively.</interactText>
                 <weight>8</weight>
                 <sellPrice>50</sellPrice>
                 <damage>10</damage>
@@ -85,6 +89,7 @@
             </item>
             <item id="3403" name="Mjollnir" type="weapon">
                 <description>The legendary hammer of lightning</description>
+                <interactText>The power of lightning is now in your hands</interactText>
                 <weight>8</weight>
                 <sellPrice>50</sellPrice>
                 <damage>50</damage>
@@ -93,6 +98,7 @@
             </item>
             <item id="3701" name="Strength Potion" type="potion">
                 <description>I'm pretty sure these are just steroids</description>
+                <interactText>You feel your muscles growing stronger.</interactText>
                 <weight>2</weight>
                 <sellPrice>50</sellPrice>
                 <attributeModifier attribute="STRENGTH">
@@ -248,17 +254,6 @@
         </entity>
         <questLog>
             <acceptedQuests>
-                <quest id="4001" name="Save the hotel!">
-                    <description>"A quest of upmost importance!"</description>
-                    <objectives>
-                        <objective name="Kill the angry man" type="tally">
-                            <targetID>5002</targetID>
-                            <gameEvent>KILL</gameEvent>
-                            <targetQuantity>1</targetQuantity>
-                            <count>0</count>
-                        </objective>
-                    </objectives>
-                </quest>
             </acceptedQuests>
             <completedQuests></completedQuests>
         </questLog>

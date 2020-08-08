@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.ananotherrpg.level.Quest;
+import com.ananotherrpg.level.quest.Quest;
 
+/**
+ * A manager for the player's quest knowledge
+ */
 public class QuestLog {
     private List<Quest> acceptedQuests;
     private List<Quest> completedQuests;

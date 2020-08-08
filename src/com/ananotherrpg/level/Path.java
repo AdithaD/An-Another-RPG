@@ -2,7 +2,9 @@ package com.ananotherrpg.level;
 
 import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.util.Link;
-
+/**
+ * A connection between two <code>Location</code>s. Acts as an Link (edge) in a <code>LocationGraph</code>.
+ */
 public class Path extends Link<Location> implements IIdentifiable{
 
     private int pathID;

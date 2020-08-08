@@ -10,20 +10,32 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.IQueryable;
-
+/**
+ * Manages all printing to the console, and getting user input from the console
+ */
 public class IOManager {
 
     private static Scanner s = new Scanner(System.in);
 
+    /**
+     * Different ways to display a list.
+     */
     public enum ListType {
         BULLET, NUMBERED, ONE_LINE
     };
 
+    /**
+     * Different methods of user selection
+     */
     public enum SelectionMethod {
         NUMBERED, TEXT
     }
 
-    // Yes == TRUE, No == FALSE
+    /**
+     * Asks a yes or no question from the user
+     * @param question The question to be asked
+     * @return true if YES, false if NO
+     */
     public static Boolean askYesOrNoQuestion(String question){ 
         println(question + " (Y/N)");
 
@@ -42,7 +54,8 @@ public class IOManager {
 
     }
 
-    public static List<String> extractIQueryableListForms(List<? extends IQueryable> list) {
+    
+    private static List<String> extractIQueryableListForms(List<? extends IQueryable> list) {
         return list.stream().map(IQueryable::getListForm).collect(Collectors.toList());
     }
 
@@ -210,8 +223,8 @@ public class IOManager {
         System.out.print(text);
     }
 
-	public static String getInput(String q) {
-        IOManager.println(q);
+	public static String getInput(String input) {
+        IOManager.println(input);
 		return s.nextLine().trim();
 	}
     

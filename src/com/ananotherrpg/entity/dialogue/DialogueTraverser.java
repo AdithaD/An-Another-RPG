@@ -9,29 +9,30 @@ import com.ananotherrpg.entity.Entity;
 import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
-import com.ananotherrpg.level.QuestTemplate;
+import com.ananotherrpg.level.quest.QuestTemplate;
 /**
- * This class traverses a Dialogue instance and stores any new knowledge (Quest, Location/Links, Items)
+ * This class traverses an <code>Entity</code>'s <code>Dialogue</code> and stores any new player knowledge (Quest, Location/Links)
  */
 public class DialogueTraverser {
     
-    private Dialogue dialogue;
+    private DialogueGraph dialogue;
     private DialogueLine currentLine;
 
     private Entity source;
-    private Entity traverser;
+    private Entity player;
 
+    //Currently unused
     private List<DialogueLine> traversedLines;
 
     private List<QuestTemplate> questTemplates;
     private List<Integer> newPathIDs;
 
-    public DialogueTraverser(Dialogue dialogue, DialogueLine startingLine, Entity source, Entity traverser){
+    public DialogueTraverser(DialogueGraph dialogue, DialogueLine startingLine, Entity source, Entity traverser){
         this.dialogue = dialogue;
         currentLine = startingLine;
 
         this.source = source;
-        this.traverser = traverser;
+        this.player = traverser;
 
         this.traversedLines = new ArrayList<DialogueLine>();
         traversedLines.add(currentLine);
@@ -40,6 +41,10 @@ public class DialogueTraverser {
         newPathIDs = new ArrayList<Integer>();
     }
 
+    /**
+     * Begins the dialogue loop. Will exit once a {@linkplain DialogueGraph#isTerminal(DialogueLine) terminal}
+     * <code>DialogueLine</code> is reached.
+     */
     public void start(){
         IOManager.println(source.getName() + " says: " + currentLine.getLine());
         while (!dialogue.isTerminal(currentLine)) {
@@ -55,8 +60,11 @@ public class DialogueTraverser {
         }
     }
 
+    /**
+     * Queries the user for <code>Response</code>s from the <code>currentLine</code>
+     */
     private Optional<Response> askPlayerFoResponse() {
-        List<Response> viableResponses = dialogue.getViableResponses(source, currentLine, traverser);
+        List<Response> viableResponses = dialogue.getViableResponses(source, currentLine, player);
         Optional<Response> viableResponse;
         if(viableResponses.isEmpty()){
             IOManager.println("You have been left speechless..."); 
@@ -68,29 +76,40 @@ public class DialogueTraverser {
         return viableResponse;
     }
 
+    /**
+     * Moves the traverser onto the next <code>DialogueLine</code> based on the response selected.
+     * @param response The reponse the player selected.
+     */
     private void nextLine(Response response) {
         currentLine = response.getIncident();
         currentLine.visit(this);
         traversedLines.add(currentLine);
     }
 
+
     public List<QuestTemplate> getQuestTemplates(){
         return Collections.unmodifiableList(questTemplates);
     }
 
+    public List<Integer> getNewPathIDs() {
+		return newPathIDs;
+	}
+
     /**
      * For use with the visitor pattern,
-     * @param questID The ID of the quest to record
+     * @param questTemplate The questTemplate to record
      */
 	public void recordQuest(QuestTemplate questTemplate) {
         questTemplates.add(questTemplate);
     }
     
+    /**
+     * For use with the visitor pattern,
+     * @param pathID The questID to record
+     */
     public void recordPath(int pathID){
         newPathIDs.add(pathID);
     }
 
-	public List<Integer> getNewPathIDs() {
-		return newPathIDs;
-	}
+	
 }

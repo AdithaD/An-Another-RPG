@@ -1,4 +1,5 @@
-package com.ananotherrpg.inventory;
+package com.ananotherrpg.entity.inventory;
+
 
 import com.ananotherrpg.IQueryable;
 

@@ -1,7 +1,10 @@
-package com.ananotherrpg.level;
+package com.ananotherrpg.level.quest;
 
 import java.util.List;
-
+/**
+ * A inital state version of a <code>Quest</code>, which will be instantiated to a <code>Quest</code> before
+ * given to the <code>PlayerAvater</code>
+ */
 public class QuestTemplate{
 
     private final int questID;
@@ -11,6 +14,10 @@ public class QuestTemplate{
 
     List<Objective> objectives;
 
+    /**
+     * Instantiates a new quest
+     * @return A new quest
+     */
     public Quest instantiateTemplate() {
         return new Quest(questID, name, description, objectives);
     }

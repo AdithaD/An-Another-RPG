@@ -1,5 +1,7 @@
 package com.ananotherrpg.entity.dialogue;
-
+/**
+ * A <code>DialogueLine</code> that returns an ID for a <code>Path</code> when traversed
+ */
 public class PathDialogueLine extends DialogueLine{
 
     private int pathID;

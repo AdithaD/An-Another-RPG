@@ -1,15 +1,11 @@
 package com.ananotherrpg.entity;
 
-import java.util.Optional;
-import java.util.Random;
-
 import com.ananotherrpg.IIdentifiable;
 import com.ananotherrpg.entity.dialogue.Dialogue;
 import com.ananotherrpg.entity.dialogue.DialogueTraverser;
-import com.ananotherrpg.inventory.Inventory;
-import com.ananotherrpg.inventory.Item;
-import com.ananotherrpg.inventory.Weapon;
-import com.ananotherrpg.io.IOManager;
+import com.ananotherrpg.entity.inventory.Inventory;
+import com.ananotherrpg.entity.inventory.Item;
+import com.ananotherrpg.entity.inventory.Weapon;
 
 /**
  * The Entity class represents "living beings" in the game
@@ -23,28 +19,21 @@ public class Entity implements IIdentifiable {
 
 	private Attributes attributes;
 	
-	private int hp;
-
 	private int level;
-	private int xp;
 	private boolean isDead;
 
 	private Inventory inventory;
-	
 
 	private Dialogue dialogue;
 
-	public Entity(int entityID, String name, String description, Attributes attributes, int level, 
-			Inventory inventory, Dialogue dialogue, boolean isDead) {
+	public Entity(int entityID, String name, String description, Attributes attributes, int level, Inventory inventory,
+			Dialogue dialogue, boolean isDead) {
 		this.entityID = entityID;
 		this.name = name;
 		this.description = description;
 
 		this.attributes = attributes;
 		this.level = level;
-
-		this.xp = 0;
-		hp = attributes.calculateMaxHp();
 
 		this.inventory = inventory;
 
@@ -53,26 +42,43 @@ public class Entity implements IIdentifiable {
 		this.isDead = isDead;
 	}
 
-	public Entity(int entityID, String name, String description, Attributes attributes, int level, int xp, int hp,
-			Inventory inventory, Dialogue dialogue, boolean isDead) {
-		this(entityID, name, description, attributes, level, inventory, dialogue, isDead);
-		this.xp = xp;
-		this.hp = hp;
-	}
-
-	public void equipWeapon(Weapon weapon){
-		IOManager.println("You equip the weapon " + weapon.getName());
-		inventory.equipWeapon(weapon);
-	}
-
+	/**
+	 * Adds a modifier to the player's attributes
+	 * @param attributeModifier The modifier to add
+	 */
 	public void applyModifiers(AttributeModifier attributeModifier) {
 		attributes.addModifier(attributeModifier);
 	}
 
+	/**
+	 * Uses the specified item.
+	 * @param item The item to use
+	 */
 	public void use(Item item) {
 		inventory.use(item, this);
 	}
 
+	/**
+	 * Sets the weapon as the equipped weapon for the entity
+	 * @param weapon The weapon to equip
+	 */
+	public void equipWeapon(Weapon weapon){
+		inventory.equipWeapon(weapon);
+	}
+
+	/**
+	 * Instatiates a <code>DialogueTraverser</code> between the specific entity and this entity and its dialogue.
+	 * @param partner The entity to start the dialogue with
+	 * @return A <code>DialogueTraverser</code> to go through the <code>Dialogue</code> with
+	 */
+	public DialogueTraverser startDialogue(Entity partner) {
+		return dialogue.getTraverser(this, partner);
+	}
+
+	/**
+	 * Calculates the damage this entity would do in an attack.
+	 * @return The amount of damage.
+	 */
 	public int calculateDamage(){
 		int damage = 0;
 		if(inventory.hasEquippedWeapon()){
@@ -89,6 +95,9 @@ public class Entity implements IIdentifiable {
 		return damage;
 	}
 
+	/**
+	 * Instructs the entity to die
+	 */
 	public void die() {
 		isDead = true;
 	}
@@ -137,9 +146,7 @@ public class Entity implements IIdentifiable {
 		return entityID;
 	}
 
-	public DialogueTraverser startDialogue(Entity playerEntity) {
-		return dialogue.getTraverser(this, playerEntity);
-	}
+	
 
 	public int getLevel() {
 		return level;

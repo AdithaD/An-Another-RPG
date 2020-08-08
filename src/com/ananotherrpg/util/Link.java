@@ -4,6 +4,10 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An edge in a <code>Graph</code>
+ * @param <T> The type of node it links between
+ */
 public class Link<T>{
     private List<T> nodes;
 

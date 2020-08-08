@@ -3,6 +3,7 @@ package com.ananotherrpg.level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.ananotherrpg.IIdentifiable;
@@ -50,6 +51,12 @@ public class Location implements IIdentifiable {
 		return Collections.unmodifiableList(entities);
 	}
 
+	public List<Entity> getAlivePermanentEntities(){
+		List<Entity> aliveEntities = entities.stream().filter(e-> !e.isDead()).collect(Collectors.toList());
+
+		return Collections.unmodifiableList(aliveEntities);
+	}
+
 	public Inventory getInventory() {
 		return itemsOnGround;
 	}
@@ -80,6 +87,10 @@ public class Location implements IIdentifiable {
 		identifiables.addAll(entities);
 		identifiables.addAll(itemsOnGround.getItems().stream().map(ItemStack::getItem).collect(Collectors.toList()));
 		return identifiables;
+	}
+
+	public boolean hasAliveEntities() {
+		return entities.stream().anyMatch(e-> !e.isDead());
 	}
 
 }

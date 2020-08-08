@@ -10,24 +10,26 @@ import com.ananotherrpg.io.IOManager;
 import com.ananotherrpg.io.IOManager.ListType;
 import com.ananotherrpg.io.IOManager.SelectionMethod;
 import com.ananotherrpg.level.quest.QuestTemplate;
+
 /**
- * This class traverses an <code>Entity</code>'s <code>Dialogue</code> and stores any new player knowledge (Quest, Location/Links)
+ * This class traverses an <code>Entity</code>'s <code>Dialogue</code> and
+ * stores any new player knowledge (Quest, Location/Links)
  */
 public class DialogueTraverser {
-    
+
     private DialogueGraph dialogue;
     private DialogueLine currentLine;
 
     private Entity source;
     private Entity player;
 
-    //Currently unused
+    // Currently unused
     private List<DialogueLine> traversedLines;
 
     private List<QuestTemplate> questTemplates;
     private List<Integer> newPathIDs;
 
-    public DialogueTraverser(DialogueGraph dialogue, DialogueLine startingLine, Entity source, Entity traverser){
+    public DialogueTraverser(DialogueGraph dialogue, DialogueLine startingLine, Entity source, Entity traverser) {
         this.dialogue = dialogue;
         currentLine = startingLine;
 
@@ -42,21 +44,16 @@ public class DialogueTraverser {
     }
 
     /**
-     * Begins the dialogue loop. Will exit once a {@linkplain DialogueGraph#isTerminal(DialogueLine) terminal}
+     * Begins the dialogue loop. Will exit once a
+     * {@linkplain DialogueGraph#isTerminal(DialogueLine) terminal}
      * <code>DialogueLine</code> is reached.
      */
-    public void start(){
+    public void start() {
         IOManager.println(source.getName() + " says: " + currentLine.getLine());
         while (!dialogue.isTerminal(currentLine)) {
-            Optional<Response> response = askPlayerFoResponse();
-
-            if(!response.isPresent()){
-                IOManager.println("You've been left utterly speechless");
-                break;
-            }else{
-                nextLine(response.get());
-                IOManager.println(source.getName() + " says: " + currentLine.getLine());
-            }
+            Response response = askPlayerFoResponse().get();
+            nextLine(response);
+            IOManager.println(source.getName() + " says: " + currentLine.getLine());
         }
     }
 
@@ -66,18 +63,21 @@ public class DialogueTraverser {
     private Optional<Response> askPlayerFoResponse() {
         List<Response> viableResponses = dialogue.getViableResponses(source, currentLine, player);
         Optional<Response> viableResponse;
-        if(viableResponses.isEmpty()){
-            IOManager.println("You have been left speechless..."); 
-            viableResponse =  Optional.empty();
-        }else{
-            viableResponse = IOManager.listAndQueryUserInputAgainstIQueryables(viableResponses, ListType.NUMBERED, SelectionMethod.NUMBERED, false);
-            
+        if (viableResponses.isEmpty()) {
+            IOManager.println("You have been left speechless...");
+            viableResponse = Optional.empty();
+        } else {
+            viableResponse = IOManager.listAndQueryUserInputAgainstIQueryables(viableResponses, ListType.NUMBERED,
+                    SelectionMethod.NUMBERED, false);
+
         }
         return viableResponse;
     }
 
     /**
-     * Moves the traverser onto the next <code>DialogueLine</code> based on the response selected.
+     * Moves the traverser onto the next <code>DialogueLine</code> based on the
+     * response selected.
+     * 
      * @param response The reponse the player selected.
      */
     private void nextLine(Response response) {
@@ -86,30 +86,30 @@ public class DialogueTraverser {
         traversedLines.add(currentLine);
     }
 
-
-    public List<QuestTemplate> getQuestTemplates(){
+    public List<QuestTemplate> getQuestTemplates() {
         return Collections.unmodifiableList(questTemplates);
     }
 
     public List<Integer> getNewPathIDs() {
-		return newPathIDs;
-	}
+        return newPathIDs;
+    }
 
     /**
      * For use with the visitor pattern,
+     * 
      * @param questTemplate The questTemplate to record
      */
-	public void recordQuest(QuestTemplate questTemplate) {
+    public void recordQuest(QuestTemplate questTemplate) {
         questTemplates.add(questTemplate);
     }
-    
+
     /**
      * For use with the visitor pattern,
+     * 
      * @param pathID The questID to record
      */
-    public void recordPath(int pathID){
+    public void recordPath(int pathID) {
         newPathIDs.add(pathID);
     }
 
-	
 }

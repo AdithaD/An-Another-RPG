@@ -62,37 +62,27 @@ public class Campaign {
 			Optional<String> opInput = IOManager.queryUserInputAgainstStrings(options, SelectionMethod.TEXT, true);
 
 			if (opInput.isPresent()) {
-				switch (opInput.get()) {
-					case "Look around":
-						lookAround();
-						break;
-					case "Move to":
-						moveTo();
-						break;
-					case "Talk":
-						talk();
-						break;
-					case "View Quests":
-						viewQuests();
-						break;
-					case "View Inventory":
-						viewInventory();
-						break;
-					case "Pick Up":
-						pickUp();
-						break;
-					case "Examine":
-						examine();
-						break;
-					case "Fight":
-						fight();
-						break;
-					case "Save":
-						save();
-						break;
-					case "Help":
-						IOManager.listStrings(options, ListType.ONE_LINE);
-						break;
+				String input = opInput.get();
+				if (input.equalsIgnoreCase(options.get(0))) { // Look Around
+					lookAround();
+				} else if (input.equalsIgnoreCase(options.get(1))) { // Move
+					moveTo();
+				}else if (input.equalsIgnoreCase(options.get(2))) { // Examine
+					examine();
+				}else if (input.equalsIgnoreCase(options.get(3))) { // Talk
+					talk();
+				}else if (input.equalsIgnoreCase(options.get(4))) { // View Quests
+					viewQuests();
+				}else if (input.equalsIgnoreCase(options.get(5))) { // View Inventory
+					viewInventory();
+				}else if (input.equalsIgnoreCase(options.get(6))) { // Pick Up
+					pickUp();
+				}else if (input.equalsIgnoreCase(options.get(7))) { // Help
+					IOManager.listStrings(options, ListType.ONE_LINE);
+				}else if (input.equalsIgnoreCase(options.get(8))) { // Save
+					save();
+				}else if (input.equalsIgnoreCase(options.get(9))) { // Fight
+					fight();
 				}
 			} else {
 				IOManager.println("Returning to main menu");
@@ -105,8 +95,11 @@ public class Campaign {
 	private void fight() {
 		//PLayer selects a target to fight
 		IOManager.println("Who do you want to fight?");
+
+		
+
 		Optional<Entity> opEntity = IOManager.listAndQueryUserInputAgainstIQueryables(
-				player.getCurrentLocation().getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED, true);
+				player.getCurrentLocation().getAlivePermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED, true);
 
 		if (opEntity.isPresent()) {
 			Entity target = opEntity.get();
@@ -144,12 +137,12 @@ public class Campaign {
 	}
 
 	private void talk() {
-		if (!player.getCurrentLocation().hasEntities()) {
+		if (!player.getCurrentLocation().hasAliveEntities()) {
 			IOManager.println("There is no one to talk to");
 		} else {
 			IOManager.println("Who would you like to talk to?");
 			Optional<Entity> opEntity = IOManager.listAndQueryUserInputAgainstIQueryables(
-					player.getCurrentLocation().getPermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED,
+					player.getCurrentLocation().getAlivePermanentEntities(), ListType.NUMBERED, SelectionMethod.NUMBERED,
 					true);
 
 			if (opEntity.isPresent()) {

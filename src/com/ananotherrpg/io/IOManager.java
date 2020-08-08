@@ -90,13 +90,13 @@ public class IOManager {
         } else {
             String validatedInput = "";
             if (selectionMethod == SelectionMethod.NUMBERED) {
-                print("Enter choice number: ");
-
                 String[] intToStringMap = data.toArray(new String[0]);
 
                 int input = -1;
 
-                while (!((input >= 1) && (input <= intToStringMap.length))) {
+                boolean validInput = false;
+                while (!validInput) {
+                    print("Enter choice number: ");
                     String inputData = s.nextLine().trim();
                     if (inputData.equalsIgnoreCase("Exit") && canExit) {
                         return Optional.empty();
@@ -107,12 +107,19 @@ public class IOManager {
                             println("That's not a valid option!");
                         }
                     }
+
+                    if(((input >= 1) && (input <= intToStringMap.length))){
+                        validInput = true;
+                    }else{
+                        println("That's not a valid option!");
+                    }
                 }
                 validatedInput = intToStringMap[input - 1];
             } else if (selectionMethod == SelectionMethod.TEXT) {
                 String input = s.nextLine().trim();
 
-                while (!data.contains(input)) {
+                // Looks for a match ignoring case
+                while (!data.stream().anyMatch(input::equalsIgnoreCase)) {
                     if (input.equalsIgnoreCase("Exit") && canExit) {
                         return Optional.empty();
                     }

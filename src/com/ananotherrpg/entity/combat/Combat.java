@@ -99,6 +99,7 @@ public class Combat {
 
                 if (opponents.stream().allMatch(e -> e.isDead()) || player.isDead()) {
                     endCombat();
+                    break;
                 }
             }
         }

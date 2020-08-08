@@ -146,7 +146,7 @@ public class IOManager {
         if (optionalData.isPresent()) {
             try {
 
-                return Optional.of(options.get(optionalData.orElseThrow()));
+                return Optional.of(options.get(optionalData.get()));
             } catch (NoSuchElementException e) {
                 println("Catastrophic error in user query");
                 return Optional.empty();
@@ -168,7 +168,7 @@ public class IOManager {
         if (optionalData.isPresent()) {
             try {
 
-                return Optional.of(options.get(optionalData.orElseThrow()));
+                return Optional.of(options.get(optionalData.get()));
             } catch (NoSuchElementException e) {
                 println("Catastrophic error in user query");
                 return Optional.empty();
@@ -190,7 +190,7 @@ public class IOManager {
                 if (optionalData.isPresent()) {
                     try {
 
-                        return Optional.of(customMap.get(optionalData.orElseThrow()));
+                        return Optional.of(customMap.get(optionalData.get()));
                     } catch (NoSuchElementException e) {
                         println("Catastrophic error in user query");
                         return Optional.empty();

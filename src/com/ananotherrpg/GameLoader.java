@@ -341,7 +341,9 @@ public class GameLoader {
         }
 
         Inventory locationInventory = new Inventory();
-        NodeList itemList = locationElement.getElementsByTagName("item");
+        Element e_itemsOnGround = (Element) locationElement.getElementsByTagName("itemsOnGround").item(0);
+
+        NodeList itemList = e_itemsOnGround.getElementsByTagName("item");
         for (int i = 0; i < itemList.getLength(); i++) {
             Node itemNode = itemList.item(i);
             if (itemNode.getNodeType() == Node.ELEMENT_NODE) {

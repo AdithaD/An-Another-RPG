@@ -203,7 +203,7 @@
                         <item id="3403" quantity="1" />
                     </itemsOnGround>
                 </location>
-                <location id="1002" name="A non-descript room">
+                <location id="1002" name="a non-descript room">
                     <description>"A run down room."</description>
                     <entities>
                         <entity id="5002" name="Angry Man">

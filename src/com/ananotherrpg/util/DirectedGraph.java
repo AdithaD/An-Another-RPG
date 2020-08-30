@@ -58,4 +58,12 @@ public class DirectedGraph<T, S extends IDirectedLink<T>> {
 		return Collections.unmodifiableList(incidenceMap.get(node));
 	}
     
+    public String toString(){
+        int edges = 0;
+        for (List<S> links : incidenceMap.values()) {
+            edges += links.size();
+        }
+
+        return "Directed Graph with " + incidenceMap.keySet().size() + " nodes, and " + edges + " edges. ";
+    }
 }

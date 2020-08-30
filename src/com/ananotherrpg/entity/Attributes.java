@@ -16,10 +16,15 @@ public class Attributes {
     // Strength -> damage scaling
     private int strength;
     private static final int BASE_UNARMED_DAMAGE = 2;
+    private static final double BASE_DAMAGE_SCALING_FACTOR = 0.05;
+    private static final double CRITICAL_MULTIPLIER_SCALING_FACTOR = 0.02;
     // Agility -> Evasion, Critical Hit Chance Bonus,
     private int agility;
     private static double BASE_EVASION = 0.05;
+    private static final double BASE_EVASION_SCALING_FACTOR = 0.01;
+
     private static double BASE_CRIT_CHANCE = 0.1;
+    private static final double CRITICAL_CHANCE_SCALING_FACTOR = 0.02;
 
     // Constitution -> HP
     private int constitution;
@@ -54,7 +59,7 @@ public class Attributes {
      * @return A percentage of how much weapon base damage should be scaled
      */
     public double calculateBaseDamageScaling() {
-        return strength * 0.05;
+        return strength * BASE_DAMAGE_SCALING_FACTOR;
     }
 
     /**
@@ -83,7 +88,7 @@ public class Attributes {
      * @return A percentage representing bonus crit chance
      */
     public double calculateCritChanceBonus() {
-        return (agility * 0.02) + BASE_CRIT_CHANCE;
+        return (agility * CRITICAL_CHANCE_SCALING_FACTOR) + BASE_CRIT_CHANCE;
     }
 
     /**
@@ -94,7 +99,7 @@ public class Attributes {
      * @return A percentage representing bonus crit damage
      */
     public double calculateCritMultiBonus() {
-        return (strength * 0.02) + BASE_CRIT_CHANCE;
+        return (strength * CRITICAL_MULTIPLIER_SCALING_FACTOR) + BASE_CRIT_CHANCE;
     }
 
     /**
@@ -103,7 +108,7 @@ public class Attributes {
      * @return The chance to evade an attack
      */
     public double calculateEvasion() {
-        return (agility * 0.01) + BASE_EVASION;
+        return (agility * BASE_EVASION_SCALING_FACTOR) + BASE_EVASION;
 
     }
 

@@ -127,7 +127,14 @@ public class Combat {
             if (!actionName.isPresent())
                 throw new IllegalStateException("No action chosen during combat");
 
-            CombatAction action = actions.get(actionName.get());
+            String selectedAction = "";
+            for (String action : actions.keySet()) {
+                if(action.equalsIgnoreCase(actionName.get())){
+                    selectedAction = action;
+                }
+            }
+
+            CombatAction action = actions.get(selectedAction);
             switch (action) {
                 case ATTACK:
                     Optional<Combatant> target = queryOpponents();
